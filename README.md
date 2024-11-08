@@ -17,3 +17,10 @@ You need to create:
 - A Python application that will periodically schedule an update of the data warehouse from the data in S3. Again, status and errors should be logged to Cloudwatch, and an alert triggered if a serious error occurs.
   
 - In the final week of the course, you should be asked to create a simple visualisation such as described above. In practice, this will mean creating SQL queries to answer common business questions. Depending on the complexity of your visualisation tool, other coding may be required too.
+
+
+1. Make s3, setting up iam roles and permissions.
+2. Write lambda code to connect to database, checks data and saves it in the s3
+3. Set-up an EventBridge rule to trigger the lambda code at defined intervals
+4. Set-up cloudwatch to monitor failures and create a trigger that sends an email in the case of an error
+    
