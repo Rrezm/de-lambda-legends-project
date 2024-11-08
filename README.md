@@ -19,8 +19,28 @@ You need to create:
 - In the final week of the course, you should be asked to create a simple visualisation such as described above. In practice, this will mean creating SQL queries to answer common business questions. Depending on the complexity of your visualisation tool, other coding may be required too.
 
 
-1. Make s3, setting up iam roles and permissions.
-2. Write lambda code to connect to database, checks data and saves it in the s3
+## EXTRACT
+
+1. Make s3, setting up iam roles and permissions. Persmissions to connect s3 to lambda.
+2. Write lambda code to connect to database, checks data and saves it in the s3 (May need pg8000 in Python to use psql to get data)
 3. Set-up an EventBridge rule to trigger the lambda code at defined intervals
+4. Connect EventBridge to lambda with Step Functions and State machines (?)
+5. Set-up cloudwatch to monitor failures and create a trigger that sends an email in the case of an error
+
+## TRANSFORM
+
+1. Make s3, setting up iam roles and permissions. Persmissions to connect s3 to lambda.
+2. Write lambda code to transform the data in the ingestion s3 into star schemas (separate into fact and dimension tables). Use python and pg8000 (psql)
+3. Set-up an EventBridge rule to trigger the lambda code at defined intervals
+4. Connect EventBridge to lambda with Step Functions and State machines (?)
+5. Set-up cloudwatch to monitor failures and create a trigger that sends an email in the case of an error
+
+## LOAD
+
+1. Write lambda code to load the processed data into data warehouse (?)
+2. Set-up an EventBridge rule to trigger the lambda code at defined intervals
+3. Connect EventBridge to lambda with Step Functions and State machines (?)
 4. Set-up cloudwatch to monitor failures and create a trigger that sends an email in the case of an error
-    
+
+## VISUALISATION
+BI dashboard with AWS Quicksight, or Jupyter notebook using matplotlib and seaborn.
