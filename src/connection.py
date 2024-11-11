@@ -2,7 +2,7 @@ from pg8000.native import Connection
 from dotenv import load_dotenv
 import os
 
-load_dotenv(override=True)
+load_dotenv(override=True) ## states whether the existing os env variables(logins) should be overwritten by the .env file.
 
 def connect_to_db():
     return Connection(
