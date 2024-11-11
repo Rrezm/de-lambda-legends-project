@@ -3,3 +3,5 @@ boto3
 moto
 botocore
 pg8000
+python-dotenv
+requests
