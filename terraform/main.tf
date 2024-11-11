@@ -4,10 +4,15 @@ terraform {
             source  = "hashicorp/aws"
             version = "~> 5.0"
         }
+        
     }
-   
+    backend "s3" {
+        bucket = "lambda-legends-tfstate"
+        key = "s3-file-reader/terraform.tfstate"
+        region = "eu-west-2"
+        }
+    }
 
-    }
 
 provider "aws" {
     region = "eu-west-2"
@@ -19,13 +24,10 @@ provider "aws" {
       Repository = "de-lambda-legends-project"
       CostCentre = "DE"
       Environment = "dev"
-      RetentionDate = "2024-11-30"
-      
+      RetentionDate = "2024-11-30"      
       }
-  }
-
-
     }
+}
 
 data "aws_caller_identity" "current" {}
 

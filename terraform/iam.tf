@@ -10,8 +10,8 @@ data "aws_iam_policy_document" "s3_policy_doc" {
       ]
 
       resources = [
-        # "${aws_s3_bucket.ingested-data-lambda-legends-24.arn}/*",
-        # "${aws_s3_bucket.code_bucket.arn}/*"
+         "${aws_s3_bucket.ingested_bucket.arn}/*"
+        
       ]
   }
 }
