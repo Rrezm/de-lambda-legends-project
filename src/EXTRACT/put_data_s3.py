@@ -7,4 +7,5 @@ def put_data_in_s3():
     read_all_tables()
     files = os.listdir(path='data')
     for file in files:
-        s3.put_object(Bucket=)
+        s3.put_object(Bucket="ingested-data-lambda-legends-24",
+                      Body=file)
