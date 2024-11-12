@@ -11,7 +11,7 @@ tags = {
 
 resource "aws_s3_bucket" "lambda_code_bucket" {
 
-  Bucket_prefix = "lambda-extract-code-bucket-"
+  bucket_prefix = "lambda-extract-code-bucket-"
   force_destroy = true 
 
 tags = {
@@ -31,5 +31,6 @@ source =  "${path.module}/../extract_data.zip"
 resource "aws_s3_object" "layer_code" {
 bucket =  aws_s3_bucket.lambda_code_bucket.bucket
 key    =  "layer_code.zip"
-source =  "${path.module}/layer.zip"
+source =  data.archive_file.layer.output_path
+depends_on = [ data.archive_file.layer]
 }
