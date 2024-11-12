@@ -30,4 +30,3 @@ def read_all_tables():
     for name in table_names:
         read_data(name)
 
-read_all_tables() # call the function 
