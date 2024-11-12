@@ -1,8 +1,8 @@
 resource "aws_s3_bucket" "ingested_bucket"{
-    bucket_prefix = "ingested-data-lambda-legends-24-"
+    bucket = "ingested-data-lambda-legends-24"
 
 tags = {
-  Name = "ingested-data-lambda-legends-24-"
+  Name = "ingested-data-lambda-legends-24"
   Eviroment = "Dev"
   Project = "Lambda Legends Data Processor"
 
