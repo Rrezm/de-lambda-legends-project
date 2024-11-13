@@ -71,12 +71,19 @@ data "aws_iam_policy_document" "credentials_policy" {
   }
 }
 
+## policy doc for secretsmanager
+
 resource "aws_iam_policy" "credentials" {
   name_prefix = "secrets_policy"
   policy      = data.aws_iam_policy_document.credentials_policy.json
 }
 
+## policy for secretsmanager
+
 resource "aws_iam_role_policy_attachment" "secrets_policy_role_attachment" {
   role = aws_iam_role.lambda_role.name
   policy_arn = aws_iam_policy.credentials.arn
 }
+
+## attaching secretsmanager policy to our lambda role
+
