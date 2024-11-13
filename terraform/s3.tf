@@ -24,13 +24,13 @@ tags = {
 
 resource "aws_s3_object" "lambda_code" {
 bucket =  aws_s3_bucket.lambda_code_bucket.bucket
-key    =  "extract_data_lambda_code.zip"
+key    =  "ingestion_lambda/extract_data.zip"
 source =  "${path.module}/../extract_data.zip"
 }
 
 resource "aws_s3_object" "layer_code" {
 bucket =  aws_s3_bucket.lambda_code_bucket.bucket
-key    =  "layer_code.zip"
+key    =  "layer/layer.zip"
 source =  data.archive_file.layer.output_path
 depends_on = [ data.archive_file.layer]
 }

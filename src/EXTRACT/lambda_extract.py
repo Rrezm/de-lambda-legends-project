@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import os
 import boto3
 import csv
+import io
 
 load_dotenv(override=True) ## states whether the existing os env variables(logins) should be overwritten by the .env file.
 
@@ -28,9 +29,10 @@ def read_data(table_name):
     new_keys = [i for key in keys for i in key] # Flattens the list so the csv writer does not enounter any issues, otherwise it will appear as tuples 
     with open(f'/tmp/{table_name}.csv', 'w', newline='') as csvfile: # creates csv file in write mode 
         writer = csv.writer(csvfile) # creates csv writer object 
-        writer.writerow(new_keys) # writes the headers(column names) as the first row 
+        writer.writerow(new_keys) # writes the headers(column names) as the first row
+    
         writer.writerows(result) # writes all rows of data from the specified table row by row 
-
+    
     
 def read_all_tables():
     table_names = ['counterparty',
