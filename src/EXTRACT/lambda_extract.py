@@ -29,7 +29,6 @@ def read_and_put_data(table_name, bucket_name, s3):
     close_conn(conn)
 
     new_keys = [i for key in keys for i in key] # Flattens the list so the csv writer does not enounter any issues, otherwise it will appear as tuples 
-<<<<<<< main
     csv_buffer = io.StringIO() #creates an in-memory file-like object
     writer = csv.writer(csv_buffer) # creates csv writer object
     writer.writerow(new_keys) # writes the headers(column names) as the first row 
@@ -41,14 +40,6 @@ def read_and_put_data(table_name, bucket_name, s3):
         Key=f"{table_name}.csv",
         Body=csv_buffer.getvalue()
     )
-=======
-    with open(f'/tmp/{table_name}.csv', 'w', newline='') as csvfile: # creates csv file in write mode 
-        writer = csv.writer(csvfile) # creates csv writer object 
-        writer.writerow(new_keys) # writes the headers(column names) as the first row
-    
-        writer.writerows(result) # writes all rows of data from the specified table row by row 
-    
->>>>>>> main
     
 def read_all_tables(bucket_name, s3):
     table_names = ['counterparty',

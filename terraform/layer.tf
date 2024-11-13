@@ -8,8 +8,6 @@ resource "null_resource" "create_dependencies" {
     dependencies = filemd5("${path.module}/../requirements.txt")
   }
 }
-## Team 1 is currently working on this
-## Lambda python code, has to be zipped before uploading to aws
 
 
 

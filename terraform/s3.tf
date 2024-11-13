@@ -22,6 +22,7 @@ tags = {
 }
 }
 
+
 resource "aws_s3_object" "lambda_code" {
 bucket =  aws_s3_bucket.lambda_code_bucket.bucket
 key    =  "ingestion_lambda/extract_data.zip"
