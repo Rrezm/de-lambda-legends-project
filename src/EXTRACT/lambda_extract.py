@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import os
 import boto3
 import csv
+import io
 
 load_dotenv(override=True) ## states whether the existing os env variables(logins) should be overwritten by the .env file.
 
@@ -26,11 +27,18 @@ def read_data(table_name):
     close_conn(conn)
 
     new_keys = [i for key in keys for i in key] # Flattens the list so the csv writer does not enounter any issues, otherwise it will appear as tuples 
-    with open(f'/tmp/{table_name}.csv', 'w', newline='') as csvfile: # creates csv file in write mode 
-        writer = csv.writer(csvfile) # creates csv writer object 
-        writer.writerow(new_keys) # writes the headers(column names) as the first row 
-        writer.writerows(result) # writes all rows of data from the specified table row by row 
+    csv_buffer = io.StringIO()
+    writer = csv.writer(csv_buffer) # creates csv writer object
+    writer.writerow(new_keys) # writes the headers(column names) as the first row 
+    writer.writerows(result) # writes all rows of data from the specified table row by row 
 
+    s3= boto3.client("s3")
+    csv_buffer.seek(0)
+    s3.put_object(
+        Bucket="ingested-data-lambda-legends-24",
+        Key=f"{table_name}.csv",
+        Body=csv_buffer.getvalue()
+    )
     
 def read_all_tables():
     table_names = ['counterparty',
@@ -44,16 +52,17 @@ def read_all_tables():
                    'purchase_order',
                    'payment_type',
                    'transaction']
+     
     for name in table_names:
         read_data(name)
 
 
 
-def put_data_in_s3(event, context):
-    s3 = boto3.client('s3')
-    bucket_name = "ingested-data-lambda-legends-24"
-    read_all_tables()
-    file_names = os.listdir(path='data')
-    for file_name in file_names:
-        name = file_name.split('.')[0]
-        s3.upload_file(f'/tmp/{file_name}', bucket_name, name)
+# def put_data_in_s3(event, context):
+#     s3 = boto3.client('s3')
+#     bucket_name = "ingested-data-lambda-legends-24"
+#     read_all_tables()
+#     file_names = os.listdir(path='data')
+#     for file_name in file_names:
+#         name = file_name.split('.')[0]
+#         s3.upload_file(f'/tmp/{file_name}', bucket_name, name)
