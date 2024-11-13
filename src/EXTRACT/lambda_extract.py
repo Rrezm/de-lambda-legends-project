@@ -4,23 +4,23 @@ import os
 import boto3
 import csv
 import io
-
+from EXTRACT.connection import get_db_credentials, connect_to_db, close_conn
 load_dotenv(override=True) ## states whether the existing os env variables(logins) should be overwritten by the .env file.
 
 s3= boto3.client("s3")
 bucket_name = "ingested-data-lambda-legends-24"
 
-def connect_to_db():
-    return Connection(
-        user=os.getenv("USER"),
-        password=os.getenv("PASSWORD"),
-        database=os.getenv("DATABASE"),
-        host=os.getenv("HOST"),
-        port=int(os.getenv("PORT"))
-    )
+# def connect_to_db():
+#     return Connection(
+#         user=os.getenv("USER"),
+#         password=os.getenv("PASSWORD"),
+#         database=os.getenv("DATABASE"),
+#         host=os.getenv("HOST"),
+#         port=int(os.getenv("PORT"))
+#     )
 
-def close_conn(conn):
-    conn.close()
+# def close_conn(conn):
+#     conn.close()
 
 def read_and_put_data(table_name, bucket_name, s3):
     conn = connect_to_db() # connects to the DB created in previous file 
