@@ -61,3 +61,29 @@ resource "aws_iam_role_policy_attachment" "lambda_s3_write_attachment" {
 
 ## This resources attaches the s3 policy to the lambda function 
 ## giving it permission to interact with the s3 bucket 
+
+
+data "aws_iam_policy_document" "credentials_policy" {
+  statement {
+    effect = "Allow"
+    actions   = ["secretsmanager:GetSecretValue"]
+    resources = ["arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:*"]
+  }
+}
+
+## policy doc for secretsmanager
+
+resource "aws_iam_policy" "credentials" {
+  name_prefix = "secrets_policy"
+  policy      = data.aws_iam_policy_document.credentials_policy.json
+}
+
+## policy for secretsmanager
+
+resource "aws_iam_role_policy_attachment" "secrets_policy_role_attachment" {
+  role = aws_iam_role.lambda_role.name
+  policy_arn = aws_iam_policy.credentials.arn
+}
+
+## attaching secretsmanager policy to our lambda role
+

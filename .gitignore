@@ -21,3 +21,5 @@ zen.txt
 *.tfstate*
 .env
 data/*
+*/vars.tf
+dependencies/*
