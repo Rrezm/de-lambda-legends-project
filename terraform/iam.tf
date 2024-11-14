@@ -87,3 +87,37 @@ resource "aws_iam_role_policy_attachment" "secrets_policy_role_attachment" {
 
 ## attaching secretsmanager policy to our lambda role
 
+##### EVENTBRIDGE POLICY ######
+
+resource "aws_iam_policy" "scheduler" {
+  name = "schedule-ingestion-policy"
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        # allow scheduler to execute the task
+        Effect = "Allow",
+        Action = [
+                "scheduler:ListSchedules",
+                "scheduler:GetSchedule",
+                "scheduler:CreateSchedule",
+                "scheduler:UpdateSchedule",
+                "scheduler:DeleteSchedule"
+        ]
+        
+        Resource = "*"
+      },
+      { # allow scheduler to set the IAM roles of your task
+        Effect = "Allow",
+        Action = [
+          "iam:PassRole"
+        ]
+        Resource = "arn:aws:iam::*:role/*"
+      },    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "scheduler" {
+  policy_arn = aws_iam_policy.scheduler.arn
+  role       = aws_iam_role.lambda_role.name
+}
