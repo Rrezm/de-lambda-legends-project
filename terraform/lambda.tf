@@ -17,7 +17,7 @@ resource "aws_lambda_function" "extract_lambda" {
   s3_bucket     = aws_s3_bucket.lambda_code_bucket.bucket
   s3_key        = "ingestion_lambda/extract_data.zip"
   layers        = [aws_lambda_layer_version.lambda_layer.arn]
-  timeout       = 10
+  timeout       = 100
   depends_on = [aws_s3_object.lambda_code, aws_s3_object.layer_code]
-  source_code_hash = filebase64sha256("${path.module}/../extract_data.zip")
+  source_code_hash = data.archive_file.lambda.output_base64sha256
 }
