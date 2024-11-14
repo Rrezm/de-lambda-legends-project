@@ -90,40 +90,56 @@ resource "aws_iam_role_policy_attachment" "secrets_policy_role_attachment" {
 
 ##### EVENTBRIDGE POLICY ######
 
-resource "aws_iam_policy" "scheduler" {
-  name = "schedule-ingestion-policy"
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        # allow scheduler to execute the task
-        Effect = "Allow",
-        Action = [
-                "scheduler:ListSchedules",
-                "scheduler:GetSchedule",
-                "scheduler:CreateSchedule",
-                "scheduler:UpdateSchedule",
-                "scheduler:DeleteSchedule"
-        ]
+# resource "aws_iam_role" "scheduler" {
+#   name = "schedule-ingestion-role"
+#   assume_role_policy = jsonencode({
+#     Version = "2012-10-17"
+#     Statement = [
+#       {
+#         Effect = "Allow"
+#         Principal = {
+#           Service = ["scheduler.amazonaws.com"]
+#         }
+#         Action = "sts:AssumeRole"
+#       }
+#     ]
+#   })
+# }
+
+# resource "aws_iam_policy" "scheduler" {
+#   name = "schedule-ingestion-policy"
+#   policy = jsonencode({
+#     Version = "2012-10-17"
+#     Statement = [
+#       {
+#         # allow scheduler to execute the task
+#         Effect = "Allow",
+#         Action = [
+#                 "scheduler:ListSchedules",
+#                 "scheduler:GetSchedule",
+#                 "scheduler:CreateSchedule",
+#                 "scheduler:UpdateSchedule",
+#                 "scheduler:DeleteSchedule"
+#         ]
         
-        Resource = "*"
-      },
-      { # allow scheduler to set the IAM roles of your task
-        Effect = "Allow",
-        Action = [
-          "iam:PassRole"
-        ]
-        Resource = "arn:aws:iam::*:role/*"
-      },    ]
-  })
-}
+#         Resource = "*"
+#       },
+#       { # allow scheduler to set the IAM roles of your task
+#         Effect = "Allow",
+#         Action = [
+#           "iam:PassRole"
+#         ]
+#         Resource = "arn:aws:iam::*:role/*"
+#       },    ]
+#   })
+# }
 
-resource "aws_iam_role_policy_attachment" "scheduler" {
-  policy_arn = aws_iam_policy.scheduler.arn
-  role       = aws_iam_role.lambda_role.name
-}
+# resource "aws_iam_role_policy_attachment" "scheduler" {
+#   policy_arn = aws_iam_policy.scheduler.arn
+#   role       = aws_iam_role.scheduler.name
+# }
 
-
+## CLOUDWATCH
 data "aws_iam_policy_document" "cw_document" {
   
   statement {
@@ -158,7 +174,7 @@ resource "aws_cloudwatch_metric_alarm" "ingestionlambda_error_alarm" {
   statistic                 = "Sum"
   threshold                 = 1
   alarm_description         = "This metric monitors errors in our ingestion lamnbda function"
-  alarm_actions             = [aws_sns_topic.lambda_alert.arn]# sns topic name beeing lambda_alert
+  alarm_actions             = [aws_sns_topic.cw_alert_topic.arn]# sns topic name beeing lambda_alert
   dimensions                = {FunctionName = aws_lambda_function.extract_lambda.function_name}
 
 }

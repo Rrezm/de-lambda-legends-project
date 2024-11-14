@@ -1,6 +1,6 @@
 resource "aws_s3_bucket" "ingested_bucket"{
     bucket = "ingested-data-lambda-legends-24"
-
+    force_destroy = true
 tags = {
   Name = "ingested-data-lambda-legends-24"
   Eviroment = "Dev"
