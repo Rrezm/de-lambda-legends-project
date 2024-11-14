@@ -87,6 +87,7 @@ resource "aws_iam_role_policy_attachment" "secrets_policy_role_attachment" {
 
 ## attaching secretsmanager policy to our lambda role
 
+
 ##### EVENTBRIDGE POLICY ######
 
 resource "aws_iam_policy" "scheduler" {
@@ -121,3 +122,60 @@ resource "aws_iam_role_policy_attachment" "scheduler" {
   policy_arn = aws_iam_policy.scheduler.arn
   role       = aws_iam_role.lambda_role.name
 }
+
+
+data "aws_iam_policy_document" "cw_document" {
+  
+  statement {
+
+    actions = ["logs:CreateLogStream", "logs:PutLogEvents", "logs:CreateLogGroup"
+]
+
+    resources = [
+      "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:*:*"
+    ]
+  }
+}
+
+resource "aws_iam_policy" "cw_policy" {
+  name_prefix = "cw-policy-ingestion-lambda-"
+  policy      = data.aws_iam_policy_document.cw_document.json
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_cw_policy_attachment" {
+  role       = aws_iam_role.lambda_role.name
+  policy_arn = aws_iam_policy.cw_policy.arn
+}
+#metric we are monitoring is lambda errors
+
+resource "aws_cloudwatch_metric_alarm" "ingestionlambda_error_alarm" {
+  alarm_name                = "lambdaingestionerroralarm"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 1 # to be clarifyied 
+  metric_name               = "errors"
+  namespace                 = "AWS/Lambda"
+  period                    = 60 # to be edited as per the period needed
+  statistic                 = "Sum"
+  threshold                 = 1
+  alarm_description         = "This metric monitors errors in our ingestion lamnbda function"
+  alarm_actions             = [aws_sns_topic.lambda_alert.arn]# sns topic name beeing lambda_alert
+  dimensions                = {FunctionName = aws_lambda_function.extract_lambda.function_name}
+
+}
+
+resource "aws_cloudwatch_log_metric_filter" "ingestion_error_metric_filter" {
+  name           = "ingestion_error_filter"
+  pattern        ="\"ERROR\""
+  log_group_name = aws_cloudwatch_log_group.cw_log_group.name
+
+  metric_transformation {
+    name      = "ingestion_error_filter"
+    namespace = "ingestion_error_filter"
+    value     = "1"
+  }
+}
+
+resource "aws_cloudwatch_log_group" "cw_log_group" {
+  name =  "/aws/lambda/extract_lambda"
+}
+
