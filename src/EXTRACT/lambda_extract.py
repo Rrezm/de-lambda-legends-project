@@ -13,7 +13,7 @@ logger = logging.getLogger()
 logger.setLevel("INFO")
 
 
-def get_db_credentials(secret_name="db_credentials9"):
+def get_db_credentials(secret_name="db_credentials11"):
     client = boto3.client("secretsmanager", region_name="eu-west-2")
     try:   #try to receive the secret
         response = client.get_secret_value(SecretId=secret_name)

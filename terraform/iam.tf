@@ -139,7 +139,7 @@ resource "aws_iam_role_policy_attachment" "secrets_policy_role_attachment" {
 #   role       = aws_iam_role.scheduler.name
 # }
 
-## CLOUDWATCH
+## CLOUDWATCH POLICY
 data "aws_iam_policy_document" "cw_document" {
   
   statement {
