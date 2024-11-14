@@ -3,12 +3,13 @@ from dotenv import load_dotenv
 import os
 import boto3
 import csv
+import json
 import io
-from EXTRACT.connection import get_db_credentials, connect_to_db, close_conn
+from botocore.exceptions import ClientError
+from pg8000 import DatabaseError
+
 load_dotenv(override=True) ## states whether the existing os env variables(logins) should be overwritten by the .env file.
 
-s3= boto3.client("s3")
-bucket_name = "ingested-data-lambda-legends-24"
 
 # def connect_to_db():
 #     return Connection(
@@ -21,6 +22,42 @@ bucket_name = "ingested-data-lambda-legends-24"
 
 # def close_conn(conn):
 #     conn.close()
+
+def get_db_credentials(secret_name="db_credentials3"):
+    client = boto3.client("secretsmanager", region_name="eu-west-2")
+    try:   #try to receive the secret
+        response = client.get_secret_value(SecretId=secret_name)
+    except ClientError as e:
+        if e.response["Error"]["Code"] == "ResourceNotFoundException":
+            raise Exception(f"The secret was not found") from e
+    secret = response["SecretString"]
+    credentials = json.loads(secret)
+    return {
+        "user": credentials["user"],
+        "password": credentials["password"],
+        "database": credentials["database"],
+        "host": credentials["host"],
+        "port": credentials["port"]
+    }
+
+def connect_to_db():
+    credentials = get_db_credentials()
+    if not credentials:
+        return "Failed to retrieve credentials"
+    try:
+        conn = Connection(user=credentials["user"],
+                              password=credentials["password"],
+                              database=credentials["database"],
+                              host=credentials["host"],
+                              port=credentials["port"])
+        return conn
+    except pg8000.DatabaseError as de:
+        msg = "Error connecting to database"
+        raise DatabaseError(msg) from de
+
+def close_conn(conn):
+    conn.close()
+
 
 def read_and_put_data(table_name, bucket_name, s3):
     conn = connect_to_db() # connects to the DB created in previous file 
@@ -41,7 +78,7 @@ def read_and_put_data(table_name, bucket_name, s3):
         Body=csv_buffer.getvalue()
     )
     
-def read_all_tables(bucket_name, s3):
+def read_all_tables(event, context):
     table_names = ['counterparty',
                    'currency',
                    'department',
@@ -53,7 +90,10 @@ def read_all_tables(bucket_name, s3):
                    'purchase_order',
                    'payment_type',
                    'transaction']
-     
+    
+    s3= boto3.client("s3")
+    bucket_name = "ingested-data-lambda-legends-24"
+
     for name in table_names:
         read_and_put_data(name, bucket_name, s3)
 
