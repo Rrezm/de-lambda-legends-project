@@ -20,11 +20,3 @@ resource "aws_lambda_permission" "permissions_to_allow_cloudwatch_to_invoke_lamb
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.scheduler.arn
 }
-resource "aws_sns_topic" "cw_alert_topic" {
-  name = "CwEmailAlert"
-}
-resource "aws_sns_topic_subscription" "cw_email_subscription" {
-  topic_arn = aws_sns_topic.cw_alert_topic.arn
-  protocol  = "email"
-  endpoint  = "test@gmail.com"  #to be replaced
-}

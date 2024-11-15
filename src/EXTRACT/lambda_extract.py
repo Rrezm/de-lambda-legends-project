@@ -13,7 +13,7 @@ logger = logging.getLogger()
 logger.setLevel("INFO")
 
 
-def get_db_credentials(secret_name="db_credentials"):
+def get_db_credentials(secret_name="db_credentials11"):
     client = boto3.client("secretsmanager", region_name="eu-west-2")
     try:   #try to receive the secret
         response = client.get_secret_value(SecretId=secret_name)
@@ -82,7 +82,7 @@ def read_all_tables(event, context):
                 'transaction']
     
     s3= boto3.client("s3")
-    bucket_name = "ingested-data-lambda-legends-245"
+    bucket_name = "ingested-data-lambda-legends-24"
     try:
         logger.info("getting individual tables and loading them to bucket") 
         for name in table_names:
