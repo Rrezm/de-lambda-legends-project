@@ -82,7 +82,7 @@ def read_all_tables(event, context):
                 'transaction']
     
     s3= boto3.client("s3")
-    bucket_name = "ingested-data-lambda-legends-245"
+    bucket_name = "ingested-data-lambda-legends-24"
     try:
         logger.info("getting individual tables and loading them to bucket") 
         for name in table_names:

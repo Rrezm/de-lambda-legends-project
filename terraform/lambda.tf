@@ -9,17 +9,14 @@ data "archive_file" "lambda" {
 
 
 resource "aws_lambda_function" "extract_lambda" {
-
   function_name = "extract_lambda"
-  handler       = "lambda_extract.read_all_tables"  
+  handler       = "lambda_extract.read_all_tables"
   runtime       = "python3.11"
   role          = aws_iam_role.lambda_role.arn
   s3_bucket     = aws_s3_bucket.lambda_code_bucket.bucket
   s3_key        = "ingestion_lambda/extract_data.zip"
   layers        = [aws_lambda_layer_version.lambda_layer.arn]
   timeout       = 100
-  #filename = data.archive_file.lambda.output_path
   depends_on = [aws_s3_object.lambda_code, aws_s3_object.layer_code]
-  #source_code_hash = data.archive_file.lambda.output_base64sha256
-  #source_code_hash = data.aws_s3_object.source_hash.etag
+  source_code_hash = data.archive_file.lambda.output_base64sha256
 }
