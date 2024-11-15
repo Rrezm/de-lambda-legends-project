@@ -50,7 +50,7 @@ def close_conn(conn):
     conn.close()
 
 
-def read_and_put_data(table_name, bucket_name, s3):
+def read_and_put_data(table_name, bucket_name, s3, folder_name):
     conn = connect_to_db() # connects to the DB created in previous file 
     result =  conn.run(f"SELECT * FROM {table_name};") # queries all row from 
     keys = conn.run(f"SELECT column_name FROM information_schema.columns WHERE table_name = '{table_name}';") # retrives column names/headers for the table
@@ -63,8 +63,7 @@ def read_and_put_data(table_name, bucket_name, s3):
     writer.writerows(result) # writes all rows of data from the specified table row by row 
 
     csv_buffer.seek(0) #moves the file pointer back to the beginning
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    file_name= f"{table_name}_{timestamp}.csv"
+    file_name= f"{folder_name}/{table_name}.csv"
     s3.put_object(
         Bucket=bucket_name,
         Key=file_name,
@@ -86,10 +85,12 @@ def read_all_tables(event, context):
     
     s3= boto3.client("s3")
     bucket_name = "ingested-data-lambda-legends-24"
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+    folder_name = f"Tables at {timestamp}"
     try:
-        logger.info("getting individual tables and loading them to bucket") 
+        logger.info("getting individual tables and loading them to bucket")
         for name in table_names:
-            read_and_put_data(name, bucket_name, s3)
+            read_and_put_data(name, bucket_name, s3, folder_name)
         logger.info(f"Successfuly uploaded to {bucket_name}")
     except Exception as e:
-        logger.info(f"error occured with {e}")
+        logger.error(f"error occured with {e}")
