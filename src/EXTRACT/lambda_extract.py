@@ -30,8 +30,8 @@ def get_db_credentials(secret_name="db_credentials11"):
         "port": credentials["port"]
     }
 
-def connect_to_db():
-    credentials = get_db_credentials()
+def connect_to_db(secret_name="db_credentials11"):
+    credentials = get_db_credentials(secret_name)
     if not credentials:
         return "Failed to retrieve credentials"
     try:
