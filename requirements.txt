@@ -5,4 +5,4 @@ botocore
 pg8000
 python-dotenv
 requests
-pyarrow
+pyarrowpyarrow==18.0.0
