@@ -7,23 +7,13 @@ import json
 import io
 from botocore.exceptions import ClientError
 from pg8000 import DatabaseError
+import logging
 
-load_dotenv(override=True) ## states whether the existing os env variables(logins) should be overwritten by the .env file.
+logger = logging.getLogger()
+logger.setLevel("INFO")
 
 
-# def connect_to_db():
-#     return Connection(
-#         user=os.getenv("USER"),
-#         password=os.getenv("PASSWORD"),
-#         database=os.getenv("DATABASE"),
-#         host=os.getenv("HOST"),
-#         port=int(os.getenv("PORT"))
-#     )
-
-# def close_conn(conn):
-#     conn.close()
-
-def get_db_credentials(secret_name="db_credentials3"):
+def get_db_credentials(secret_name="db_credentials"):
     client = boto3.client("secretsmanager", region_name="eu-west-2")
     try:   #try to receive the secret
         response = client.get_secret_value(SecretId=secret_name)
@@ -51,7 +41,7 @@ def connect_to_db():
                               host=credentials["host"],
                               port=credentials["port"])
         return conn
-    except pg8000.DatabaseError as de:
+    except DatabaseError as de:
         msg = "Error connecting to database"
         raise DatabaseError(msg) from de
 
@@ -80,20 +70,23 @@ def read_and_put_data(table_name, bucket_name, s3):
     
 def read_all_tables(event, context):
     table_names = ['counterparty',
-                   'currency',
-                   'department',
-                   'design',
-                   'staff',
-                   'sales_order',
-                   'address',
-                   'payment',
-                   'purchase_order',
-                   'payment_type',
-                   'transaction']
+                'currency',
+                'department',
+                'design',
+                'staff',
+                'sales_order',
+                'address',
+                'payment',
+                'purchase_order',
+                'payment_type',
+                'transaction']
     
     s3= boto3.client("s3")
-    bucket_name = "ingested-data-lambda-legends-24"
-
-    for name in table_names:
-        read_and_put_data(name, bucket_name, s3)
-
+    bucket_name = "ingested-data-lambda-legends-245"
+    try:
+        logger.info("getting individual tables and loading them to bucket") 
+        for name in table_names:
+            read_and_put_data(name, bucket_name, s3)
+        logger.info(f"Successfuly uploaded to {bucket_name}")
+    except Exception as e:
+        logger.info(f"error occured with {e}")

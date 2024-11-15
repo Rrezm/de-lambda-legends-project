@@ -1,9 +1,9 @@
 resource "aws_s3_bucket" "ingested_bucket"{
-    bucket = "ingested-data-lambda-legends-24"
-
+    bucket = "ingested-data-lambda-legends-245"
+      force_destroy = true 
 tags = {
-  Name = "ingested-data-lambda-legends-24"
-  Eviroment = "Dev"
+  Name = "ingested-data-lambda-legends-245"
+  Environmnent = "Dev"
   Project = "Lambda Legends Data Processor"
 
 }
@@ -16,7 +16,7 @@ resource "aws_s3_bucket" "lambda_code_bucket" {
 
 tags = {
   Name = "lambda-extract-code-bucket-"
-  Eviroment = "Dev"
+  Environmnent = "Dev"
   Project = "Lambda Legends Data Processor"
 
 }
@@ -26,7 +26,8 @@ tags = {
 resource "aws_s3_object" "lambda_code" {
 bucket =  aws_s3_bucket.lambda_code_bucket.bucket
 key    =  "ingestion_lambda/extract_data.zip"
-source =  "${path.module}/../extract_data.zip"
+source      = data.archive_file.lambda.output_path
+source_hash = data.archive_file.lambda.output_base64sha256
 }
 
 resource "aws_s3_object" "layer_code" {
