@@ -42,9 +42,10 @@ jobs:
         uses: hashicorp/setup-terraform@v3
       - name: Terraform Creation
         working-directory: terraform
-        with:
-          db_credentials: ${{ secrets.DB_CREDENTIALS }}
-        run: |
-          terraform init
-          terraform plan
-          terraform apply -auto-approve
+      - name: Terraform Init
+        run: terraform init
+      - name: Terraform Apply
+        env:
+          TF_VAR_credentials: ${{ secrets.DB_CREDENTIALS }}
+        run: terraform apply -auto-approve
+        
