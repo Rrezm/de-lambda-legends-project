@@ -6,7 +6,7 @@ import json
 import pg8000
 from pg8000 import DatabaseError
 
-def get_db_credentials(secret_name="credentials11"):
+def get_db_credentials(secret_name="db_credentials11"):
     client = boto3.client("secretsmanager", region_name="eu-west-2")
     try:   #try to receive the secret
         response = client.get_secret_value(SecretId=secret_name)
