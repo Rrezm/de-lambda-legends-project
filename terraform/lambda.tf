@@ -18,6 +18,8 @@ resource "aws_lambda_function" "extract_lambda" {
   s3_key        = "ingestion_lambda/extract_data.zip"
   layers        = [aws_lambda_layer_version.lambda_layer.arn]
   timeout       = 100
+  #filename = data.archive_file.lambda.output_path
   depends_on = [aws_s3_object.lambda_code, aws_s3_object.layer_code]
-  source_code_hash = data.archive_file.lambda.output_base64sha256
+  #source_code_hash = data.archive_file.lambda.output_base64sha256
+  #source_code_hash = data.aws_s3_object.source_hash.etag
 }

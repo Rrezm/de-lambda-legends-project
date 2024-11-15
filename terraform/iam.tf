@@ -119,6 +119,10 @@ resource "aws_iam_role_policy_attachment" "secrets_policy_role_attachment" {
 #   role       = aws_iam_role.lambda_role.name
 # }
 
+# resource "aws_iam_role_policy_attachment" "scheduler" {
+#   policy_arn = aws_iam_policy.scheduler.arn
+#   role       = aws_iam_role.scheduler.name
+# }
 
   data "aws_iam_policy_document" "cw_document" {
     statement {
