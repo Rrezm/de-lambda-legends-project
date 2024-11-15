@@ -1,7 +1,7 @@
-#this should set up a scheduler that will trigger the Lambda every 5 minutes
+#this should set up a scheduler that will trigger the Lambda every 2 minutes
 resource "aws_cloudwatch_event_rule" "scheduler" {
   name="schedule-for-extract_lambda"
-  description="trigger the Lambda every 5 minutes"
+  description="trigger the Lambda every 2 minutes"
   schedule_expression="cron(0/2 * * * ? *)"
 }
 
@@ -26,5 +26,5 @@ resource "aws_sns_topic" "cw_alert_topic" {
 resource "aws_sns_topic_subscription" "cw_email_subscription" {
   topic_arn = aws_sns_topic.cw_alert_topic.arn
   protocol  = "email"
-  endpoint  = "mirriamb89@gmail.com"  #to be replaced
+  endpoint  = "test@gmail.com"  #to be replaced
 }
