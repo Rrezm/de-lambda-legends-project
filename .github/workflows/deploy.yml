@@ -37,13 +37,13 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-2
       - name: Terraform Setup
-        uses: hashicorp/setup-terraform@v3
-      - name: Terraform Creation
-        working-directory: terraform
+        uses: hashicorp/setup-terraform@v3       
       - name: Terraform Init
+        working-directory: terraform
         run: terraform init
       - name: Terraform Apply
         env:
           TF_VAR_credentials: ${{ secrets.DB_CREDENTIALS }}
+        working-directory: terraform
         run: terraform apply -auto-approve
         
