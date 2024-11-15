@@ -21,7 +21,6 @@ def get_db_credentials(secret_name="db_credentials11"):
     except ClientError as e:
         if e.response["Error"]["Code"] == "ResourceNotFoundException":
             raise Exception(f"The secret was not found") from e
-    print(response)
     secret = response["SecretString"]
     credentials = json.loads(secret)
     return {
