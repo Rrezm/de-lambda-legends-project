@@ -42,6 +42,8 @@ jobs:
         uses: hashicorp/setup-terraform@v3
       - name: Terraform Creation
         working-directory: terraform
+        with:
+          db_credentials: ${{ secrets.DB_CREDENTIALS }}
         run: |
           terraform init
           terraform plan
