@@ -8,6 +8,7 @@ import io
 from botocore.exceptions import ClientError
 from pg8000 import DatabaseError
 import logging
+from datetime import datetime
 
 logger = logging.getLogger()
 logger.setLevel("INFO")
@@ -20,6 +21,7 @@ def get_db_credentials(secret_name="db_credentials11"):
     except ClientError as e:
         if e.response["Error"]["Code"] == "ResourceNotFoundException":
             raise Exception(f"The secret was not found") from e
+    print(response)
     secret = response["SecretString"]
     credentials = json.loads(secret)
     return {
@@ -30,8 +32,8 @@ def get_db_credentials(secret_name="db_credentials11"):
         "port": credentials["port"]
     }
 
-def connect_to_db(secret_name="db_credentials11"):
-    credentials = get_db_credentials(secret_name)
+def connect_to_db():
+    credentials = get_db_credentials()
     if not credentials:
         return "Failed to retrieve credentials"
     try:
@@ -62,9 +64,11 @@ def read_and_put_data(table_name, bucket_name, s3):
     writer.writerows(result) # writes all rows of data from the specified table row by row 
 
     csv_buffer.seek(0) #moves the file pointer back to the beginning
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    file_name= f"{table_name}_{timestamp}.csv"
     s3.put_object(
         Bucket=bucket_name,
-        Key=f"{table_name}.csv",
+        Key=file_name,
         Body=csv_buffer.getvalue()
     )
     
