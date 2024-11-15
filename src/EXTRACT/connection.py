@@ -40,3 +40,4 @@ def connect_to_db():
 
 def close_conn(conn):
     conn.close()
+    
