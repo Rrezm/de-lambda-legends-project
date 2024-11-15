@@ -38,11 +38,11 @@ def test_get_db_credentions_with_error():
 @mock_aws
 def test_connect_to_db_works():
     secret_name = "my-test-conn"
-    secret_value = {"user":"project_team_7", 
-                    "password": "ArveGgGcbzTaEOT", 
-                    "host": "nc-data-eng-totesys-production.chpsczt8h1nu.eu-west-2.rds.amazonaws.com", 
-                    "database": "totesys", 
-                    "port": 5432}
+    secret_value = {"user":"test_user", 
+                    "password": "test_password", 
+                    "host": "test_host", 
+                    "database": "test_database", 
+                    "port": "test_port"}
     secret_client = boto3.client("secretsmanager", region_name="eu-west-2")
     secret_client.create_secret(Name=secret_name, SecretString=json.dumps(secret_value))
     conn = connect_to_db("my-test-conn")
