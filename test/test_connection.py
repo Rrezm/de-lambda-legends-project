@@ -42,7 +42,7 @@ def test_get_db_credentions_with_error():
         get_db_credentials(secret_name="1")
 
 
-@patch("src.EXTRACT.connection.pg8000.connect")
+@patch("src.EXTRACT.connection.Connection")
 @patch("src.EXTRACT.connection.get_db_credentials")
 def test_connect_to_db_success(mock_get_db_credentials, mock_pg8000_connect):
     mock_get_db_credentials.return_value = {
@@ -74,7 +74,7 @@ def test_connect_to_db_no_credentials(mock_get_db_credentials):
     assert result == "Failed to retrieve credentials"
 
 
-@patch("src.EXTRACT.connection.pg8000.connect")
+@patch("src.EXTRACT.connection.Connection")
 @patch("src.EXTRACT.connection.get_db_credentials")
 def test_connect_with_error(mock_get_db_credentials, mock_pg8000_connect):
     mock_get_db_credentials.return_value = {
