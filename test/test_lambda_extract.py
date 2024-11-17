@@ -23,7 +23,7 @@ def test_extract(mock_connect_to_db, mock_get_db_credentials):
     ]
     s3 = boto3.client("s3", region_name="eu-west-2")
     s3.create_bucket(Bucket="test-bucket", CreateBucketConfiguration=
-                     {"LocationConstraint": "eu-west-2"})
+                    {"LocationConstraint": "eu-west-2"})
     read_and_put_data("staff", "test-bucket", s3, "test_folder")
     objects = s3.list_objects_v2(Bucket="test-bucket")
     assert "Contents" in objects
