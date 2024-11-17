@@ -188,9 +188,6 @@ resource "aws_cloudwatch_metric_alarm" "ingestionlambda_error_alarm" {
 
 resource "aws_cloudwatch_log_group" "cw_log_group" {
   name =  "/aws/lambda/${aws_lambda_function.extract_lambda.function_name}" 
-    lifecycle {
-     prevent_destroy = true
-  }
 }
 
 resource "aws_cloudwatch_event_rule" "ingestion_lambda_rule" {
