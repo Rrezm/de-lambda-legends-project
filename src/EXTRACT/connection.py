@@ -2,6 +2,8 @@ from botocore.exceptions import ClientError
 import boto3
 import json
 from pg8000 import DatabaseError
+from pg8000.native import Connection
+import logging
 
 logger = logging.getLogger()
 logger.setLevel("INFO")
