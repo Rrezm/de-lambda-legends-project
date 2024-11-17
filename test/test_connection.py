@@ -1,21 +1,23 @@
 from unittest.mock import patch, MagicMock
-from src.EXTRACT.connection import get_db_credentials, connect_to_db, close_conn
+from src.EXTRACT.connection import get_db_credentials, connect_to_db
 import pytest
 from pg8000 import DatabaseError
 import boto3
 from moto import mock_aws
 import json
 
+
 @mock_aws
 def test_get_db_credentials_works():
     secret_name = "my-test-conn"
-    secret_value = {"user":"test_user", 
-                    "password": "test_password", 
-                    "host": "test_host", 
-                    "database": "test_database", 
+    secret_value = {"user": "test_user",
+                    "password": "test_password",
+                    "host": "test_host",
+                    "database": "test_database",
                     "port": "test_port"}
     secret_client = boto3.client("secretsmanager", region_name="eu-west-2")
-    secret_client.create_secret(Name=secret_name, SecretString=json.dumps(secret_value))
+    secret_client.create_secret(Name=secret_name, 
+                                SecretString=json.dumps(secret_value))
     result = get_db_credentials(secret_name="my-test-conn")
     assert result == secret_value
     assert result["user"] == "test_user"
@@ -24,17 +26,19 @@ def test_get_db_credentials_works():
     assert result["database"] == "test_database"
     assert result["port"] == "test_port"
 
+
 @mock_aws
 def test_get_db_credentions_with_error():
     secret_name = "my-test-conn"
-    secret_value = {"user":"test_user", 
-                    "password": "test_password", 
-                    "host": "test_host", 
-                    "database": "test_database", 
+    secret_value = {"user": "test_user",
+                    "password": "test_password",
+                    "host": "test_host",
+                    "database": "test_database",
                     "port": "test_port"}
     secret_client = boto3.client("secretsmanager", region_name="eu-west-2")
-    secret_client.create_secret(Name=secret_name, SecretString=json.dumps(secret_value))
-    with pytest.raises(Exception, match=f"The secret was not found"):
+    secret_client.create_secret(Name=secret_name, 
+                                SecretString=json.dumps(secret_value))
+    with pytest.raises(Exception, match="The secret was not found"):
         get_db_credentials(secret_name="1")
 
 
@@ -72,7 +76,7 @@ def test_connect_to_db_no_credentials(mock_get_db_credentials):
 
 @patch("src.EXTRACT.connection.pg8000.connect")
 @patch("src.EXTRACT.connection.get_db_credentials")
-def test_connect_to_db_database_error(mock_get_db_credentials, mock_pg8000_connect):
+def test_connect_with_error(mock_get_db_credentials, mock_pg8000_connect):
     mock_get_db_credentials.return_value = {
         "user": "test_user",
         "password": "test_password",

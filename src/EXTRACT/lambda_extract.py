@@ -82,8 +82,8 @@ def read_all_tables(event, context):
                 'purchase_order',
                 'payment_type',
                 'transaction']
-    
-    s3= boto3.client("s3")
+
+    s3 = boto3.client("s3")
     bucket_name = "ingested-data-lambda-legends-24"
     timestamp = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
     folder_name = f"Tables at {timestamp}"
