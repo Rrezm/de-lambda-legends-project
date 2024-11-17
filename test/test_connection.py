@@ -16,7 +16,7 @@ def test_get_db_credentials_works():
                     "database": "test_database",
                     "port": "test_port"}
     secret_client = boto3.client("secretsmanager", region_name="eu-west-2")
-    secret_client.create_secret(Name=secret_name, 
+    secret_client.create_secret(Name=secret_name,
                                 SecretString=json.dumps(secret_value))
     result = get_db_credentials(secret_name="my-test-conn")
     assert result == secret_value
@@ -36,7 +36,7 @@ def test_get_db_credentions_with_error():
                     "database": "test_database",
                     "port": "test_port"}
     secret_client = boto3.client("secretsmanager", region_name="eu-west-2")
-    secret_client.create_secret(Name=secret_name, 
+    secret_client.create_secret(Name=secret_name,
                                 SecretString=json.dumps(secret_value))
     with pytest.raises(Exception, match="The secret was not found"):
         get_db_credentials(secret_name="1")
