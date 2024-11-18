@@ -7,3 +7,5 @@ python-dotenv
 requests
 pytest-cov
 coverage[toml]==7.6.4
+pandas
+pyarrow
