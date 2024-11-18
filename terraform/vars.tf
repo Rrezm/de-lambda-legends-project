@@ -3,4 +3,3 @@ variable "credentials" {
   type        = map(any)
   sensitive   = true
 }
-
