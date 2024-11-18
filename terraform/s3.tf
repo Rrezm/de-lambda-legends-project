@@ -36,3 +36,25 @@ key    =  "layer/layer.zip"
 source =  data.archive_file.layer.output_path
 depends_on = [ data.archive_file.layer]
 }
+
+resource "aws_s3_bucket" "processed_bucket"{
+  bucket = "processed-data-lambda-legends-24"
+  force_destroy = true 
+  tags = {
+    Name = "processed-data-lambda-legends-24"
+    Environmnent = "Dev"
+    Project = "Lambda Legends Data Processor"
+  }
+}
+
+resource "aws_s3_bucket" "lambda_code_bucket" {
+
+  bucket = "processed-code-lambda-legends-24"
+  force_destroy = true 
+
+  tags = {
+    Name = "processed-code-lambda-legends-24"
+    Environmnent = "Dev"
+    Project = "Lambda Legends Data Processor"
+  }
+}
