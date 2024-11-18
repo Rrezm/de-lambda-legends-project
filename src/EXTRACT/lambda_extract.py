@@ -60,8 +60,8 @@ def read_and_put_data(table_name, bucket_name, s3, folder_name):
     conn = connect_to_db()  # Connects to the database
     result = conn.run(f"SELECT * FROM {table_name};")  # Queries all rows
     keys = conn.run(
-        "SELECT column_name FROM information_schema.columns "
-        f"WHERE table_name = '{table_name}';"
+        """SELECT column_name FROM information_schema.columns "
+        WHERE table_name = ':tn';""", tn = table_name
     )  # Retrieves column names
     close_conn(conn)
 
