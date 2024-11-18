@@ -1,16 +1,21 @@
-# Lambda IAM Policy for S3 Write
+# Lambda IAM Policy for S3 Write, read and list
 data "aws_iam_policy_document" "s3_policy_doc" {
   statement {
     effect = "Allow"
 
-      actions  = [ "s3:PutObject"]
+      actions  = ["s3:PutObject",
+                  "s3:GetObject",
+                  "s3:ListBucket"
+      ]
 
       resources = [
-      "${aws_s3_bucket.ingested_bucket.arn}/*"
-        
+      "${aws_s3_bucket.ingested_bucket.arn}/*",
+      "${aws_s3_bucket.processed_bucket.arn}/*",
+      "${aws_s3_bucket.processed_bucket.arn}"
       ]
   }
 }
+
 # creates I am policy document 
 # this policy gives the lambda function access to specific s3 actions stated above 
 
@@ -20,7 +25,7 @@ resource "aws_iam_policy" "s3_policy1" {
 }
 
 
-## Holdes the actualy policy defined above 
+## Holds the actualy policy defined above 
 ## "policy" allows us to reference and generage the policy 
 ## this can then be used by multiple resources 
 
@@ -47,7 +52,7 @@ resource "aws_iam_role" "lambda_role" {
   assume_role_policy = data.aws_iam_policy_document.trust_policy.json
 }
 
-## creates the IAM Role that the lambda functgion will assume, gives access to the s3 bucket with the specified permission 
+## creates the IAM Role that the lambda function will assume, gives access to the s3 bucket with the specified permission 
 
 #Attach
 resource "aws_iam_role_policy_attachment" "lambda_s3_write_attachment" {
@@ -218,4 +223,25 @@ resource "aws_iam_policy" "sns_publish_policy" {
 resource "aws_iam_role_policy_attachment" "ingestion_sns_publish_policy_attachment" {
   role       = aws_iam_role.lambda_role.name
   policy_arn = aws_iam_policy.sns_publish_policy.arn
+}
+
+# policy for processed data bucket
+
+resource "aws_iam_policy" "s3_policy2" {
+  name_prefix = "s3-processed-policy"
+  policy      = data.aws_iam_policy_document.s3_policy_doc.json
+}
+
+# iam roles and policies for lambda function
+
+# resource "aws_iam_role" "processed_lambda_role" {
+#   name_prefix        = "role-processed-lambda"
+#   assume_role_policy = data.aws_iam_policy_document.trust_policy.json
+# }
+
+## attach 
+
+resource "aws_iam_role_policy_attachment" "processed_lambda_s3_write_attachment" {
+  role = aws_iam_role.lambda_role.name
+  policy_arn = aws_iam_policy.s3_policy2.arn
 }

@@ -47,7 +47,7 @@ resource "aws_s3_bucket" "processed_bucket"{
   }
 }
 
-resource "aws_s3_bucket" "lambda_code_bucket" {
+resource "aws_s3_bucket" "processed_lambda_code_bucket" {
 
   bucket = "processed-code-lambda-legends-24"
   force_destroy = true 
