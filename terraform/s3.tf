@@ -58,3 +58,10 @@ resource "aws_s3_bucket" "processed_lambda_code_bucket" {
     Project = "Lambda Legends Data Processor"
   }
 }
+
+resource "aws_s3_object" "transform_lambda_code" {
+bucket =  aws_s3_bucket.processed_lambda_code_bucket.bucket
+key    =  "processed_lambda_code_bucket/transform_lambda.zip"
+source      = data.archive_file.lambda.output_path
+source_hash = data.archive_file.lambda.output_base64sha256
+}
