@@ -245,3 +245,13 @@ resource "aws_iam_role_policy_attachment" "processed_lambda_s3_write_attachment"
   role = aws_iam_role.lambda_role.name
   policy_arn = aws_iam_policy.s3_policy2.arn
 }
+
+
+#################### ====== TRANSFORM LAMBDA ======= #########################
+
+
+#Attach
+resource "aws_iam_role_policy_attachment" "lambda_s3__transform_write_attachment" {
+  role = aws_iam_role.lambda_role.name
+  policy_arn = aws_iam_policy.s3_policy1.arn
+}
