@@ -1,8 +1,6 @@
 import boto3
 from pprint import pprint
-import pandas as pd
-import pyarrow as pa
-import pyarrow.parquet as pq
+import modin.pandas as pd
 import io
 from datetime import datetime
 import awswrangler as wr

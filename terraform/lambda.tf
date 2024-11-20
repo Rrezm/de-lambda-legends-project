@@ -23,7 +23,7 @@ resource "aws_lambda_function" "extract_lambda" {
 
 ###### Transformation LAMBDA #######
 
-data "archive_file" "transform lambda" {
+data "archive_file" "transform_lambda" {
   type             = "zip"
   output_file_mode = "0666"
   source_file      = "${path.module}/../src/TRANSFORM/lambda_transform.py"
@@ -41,6 +41,6 @@ resource "aws_lambda_function" "transform_lambda" {
   s3_key        = "processed_lambda_code_bucket/transform_lambda.zip"
   layers        = [aws_lambda_layer_version.lambda_layer.arn]
   timeout       = 100
-  depends_on = [aws_s3_object.lambda_code, aws_s3_object.layer_code]
-  source_code_hash = data.archive_file.lambda.output_base64sha256
+  depends_on = [aws_s3_object.transform_lambda_code, aws_s3_object.layer_code2]
+  source_code_hash = data.archive_file.transform_lambda.output_base64sha256
 }

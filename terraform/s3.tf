@@ -62,6 +62,13 @@ resource "aws_s3_bucket" "processed_lambda_code_bucket" {
 resource "aws_s3_object" "transform_lambda_code" {
 bucket =  aws_s3_bucket.processed_lambda_code_bucket.bucket
 key    =  "processed_lambda_code_bucket/transform_lambda.zip"
-source      = data.archive_file.lambda.output_path
-source_hash = data.archive_file.lambda.output_base64sha256
+source      = data.archive_file.transform_lambda.output_path
+source_hash = data.archive_file.transform_lambda.output_base64sha256
+}
+
+resource "aws_s3_object" "layer_code2" {
+bucket =  aws_s3_bucket.lambda_code_bucket.bucket
+key    =  "layer/layer2.zip"
+source =  data.archive_file.layer2.output_path
+depends_on = [ data.archive_file.layer2]
 }
