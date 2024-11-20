@@ -10,6 +10,7 @@ data "aws_iam_policy_document" "s3_policy_doc" {
 
       resources = [
       "${aws_s3_bucket.ingested_bucket.arn}/*",
+      "${aws_s3_bucket.ingested_bucket.arn}",
       "${aws_s3_bucket.processed_bucket.arn}/*",
       "${aws_s3_bucket.processed_bucket.arn}"
       ]

@@ -66,9 +66,9 @@ source      = data.archive_file.transform_lambda.output_path
 source_hash = data.archive_file.transform_lambda.output_base64sha256
 }
 
-resource "aws_s3_object" "layer_code2" {
-bucket =  aws_s3_bucket.lambda_code_bucket.bucket
-key    =  "layer/layer2.zip"
-source =  data.archive_file.layer2.output_path
-depends_on = [ data.archive_file.layer2]
-}
+# resource "aws_s3_object" "layer_code2" {
+# bucket =  aws_s3_bucket.lambda_code_bucket.bucket
+# key    =  "layer/layer2.zip"
+# source =  data.archive_file.layer2.output_path
+# depends_on = [ data.archive_file.layer2]
+# }

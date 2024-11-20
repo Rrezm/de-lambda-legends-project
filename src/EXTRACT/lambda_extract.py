@@ -12,7 +12,7 @@ logger = logging.getLogger()
 logger.setLevel("INFO")
 
 
-def get_db_credentials(secret_name="db_credentials19"):
+def get_db_credentials(secret_name="db_credentials20"):
     """Retrieve database credentials from AWS Secrets Manager."""
     client = boto3.client("secretsmanager", region_name="eu-west-2")
     try:
