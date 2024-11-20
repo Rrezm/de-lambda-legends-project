@@ -94,13 +94,15 @@ def setup():
     return df_list
 
 
-def lambda_handler():
+def lambda_handler(event,context):
     df_list = setup()
     parquet_bucket_name = "processed-data-lambda-legends-24"
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+    folder_name = f"Tables_at_{timestamp}"
     for dataframe in df_list:
-        wr.s3.to_parquet(path=f"s3://{parquet_bucket_name}", df=dataframe, dataset=True)
+        wr.s3.to_parquet(path=f"s3://{parquet_bucket_name}/{folder_name}/", df=dataframe, dataset=True)
 
-lambda_handler()
+
 
 # def transform_to_parquet():
 #     table = pa.Table.from_pandas(dataframe)
