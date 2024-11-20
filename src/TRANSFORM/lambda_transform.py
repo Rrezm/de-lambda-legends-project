@@ -4,6 +4,11 @@ import pandas as pd
 import io
 from datetime import datetime
 import awswrangler as wr
+import logging
+
+
+logger = logging.getLogger()
+logger.setLevel("INFO")
 
 
 def transform_staff(df_dict):
@@ -49,16 +54,6 @@ def transform_date():
     dim_time_df['quarter'] = dim_time_df['date_id'].dt.quarter
     return dim_time_df
 
-# print(transform_date())
-# dim_date_df = df_dict["sales_order_df"][[]]
-# dim_date_df = df_dict["sales_order_df"][[]]
-
-# print(dim_staff_df)
-# print(dim_counterparty_df)
-# print(transform_currency())
-# print(dim_design_df)
-# print(dim_location_df)
-
 def transform_fact(df_dict):
     fact_sales_df = df_dict["sales_order_df"][["sales_order_id", "counterparty_id", "units_sold", "unit_price", "currency_id", "agreed_payment_date", "agreed_delivery_date", "agreed_delivery_location_id"]] # needs create dates
     fact_sales_df["sales_staff_id"] = df_dict["sales_order_df"]["staff_id"]
@@ -95,20 +90,18 @@ def setup():
 
 
 def lambda_handler(event,context):
-    df_list = setup()
     parquet_bucket_name = "processed-data-lambda-legends-24"
     timestamp = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
     folder_name = f"Tables_at_{timestamp}"
-    for dataframe in df_list:
-        wr.s3.to_parquet(path=f"s3://{parquet_bucket_name}/{folder_name}/", df=dataframe, dataset=True)
+    try:
+        logger.info("Getting individual tables and transforming")
+        df_list = setup()
+        for dataframe in df_list:
+            wr.s3.to_parquet(path=f"s3://{parquet_bucket_name}/{folder_name}/", df=dataframe, dataset=True)
+        logger.info(f"Successfully uploaded to {parquet_bucket_name}")
+    except Exception as e:
+        logger.error(f"Error occurred with {e}")
+    
 
 
 
-# def transform_to_parquet():
-#     table = pa.Table.from_pandas(dataframe)
-#     parquet_buffer = io.BytesIO()
-#     pq.write_table(table, parquet_buffer)
-#     parquet_buffer.seek(0)
-#     parquet_key = key.replace('.csv', '.parquet')
-#     #print(parquet_buffer.getvalue())
-#     s3.put_object(Bucket='processed-data-lambda-legends-24', Key=parquet_key, Body=parquet_buffer.getvalue())
