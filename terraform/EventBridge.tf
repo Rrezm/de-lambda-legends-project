@@ -22,11 +22,11 @@ resource "aws_lambda_permission" "permissions_to_allow_cloudwatch_to_invoke_lamb
 }
 
 resource "aws_lambda_function_event_invoke_config" "example" {
-  function_name = aws_lambda_function.ingestion_lambda.function_name
+  function_name = aws_lambda_function.extract_lambda.function_name
 
   destination_config {
     on_failure {
-      destination =  aws_sns_topic.notification_topic.arn
+      destination =  aws_sns_topic.cw_alert_topic.arn
     }
 
     on_success {
