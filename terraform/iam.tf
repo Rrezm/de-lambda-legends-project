@@ -271,17 +271,39 @@ resource "aws_cloudwatch_metric_alarm" "transform_lambda_error_alarm" {
 
 }
 
-resource "aws_cloudwatch_log_group" "cw_log_group_transfrom" {
-  name =  "/aws/lambda/${aws_lambda_function.transform_lambda.function_name}" 
-}
+# resource "aws_cloudwatch_log_group" "cw_log_group_transfrom" {
+#   name =  "/aws/lambda/${aws_lambda_function.transform_lambda.function_name}" 
+# }
 
-resource "aws_cloudwatch_event_rule" "transform_lambda_rule" {
-  name                = "transform_lambda_rule"
-  schedule_expression = "rate(3 minutes)"
-}
+
 
 # resource "aws_cloudwatch_event_target" "transform_lambda_target" {
 #   rule      = aws_cloudwatch_event_rule.transform_lambda_rule.name
 #   target_id = "SendToLambda"
 #   arn       = aws_lambda_function.transform_lambda.arn
 # }
+
+resource "aws_iam_policy" "extract_lambda_policy" {
+  name   = "ExtractLambdaPolicy"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      # Permission to invoke transform_lambda on success
+      {
+        Effect = "Allow",
+        Action = "lambda:InvokeFunction",
+        Resource = aws_lambda_function.transform_lambda.arn
+      },
+      # Permission to publish to cw_alert_topic on failure
+      {
+        Effect = "Allow",
+        Action = "sns:Publish",
+        Resource = aws_sns_topic.cw_alert_topic.arn
+      }
+    ]
+  })
+}
+resource "aws_iam_role_policy_attachment" "extract_lambda_role_policy" {
+  role       = aws_iam_role.lambda_role.name
+  policy_arn = aws_iam_policy.extract_lambda_policy.arn
+}

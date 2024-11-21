@@ -17,7 +17,7 @@ resource "aws_lambda_permission" "permissions_to_allow_cloudwatch_to_invoke_lamb
   statement_id  = "AllowExecutionFromEventBridge"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.extract_lambda.function_name
-  principal     = "Lambda.amazonaws.com"
+  principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.scheduler.arn
 }
 
@@ -36,28 +36,33 @@ resource "aws_lambda_function_event_invoke_config" "example" {
 }
 
 
-resource "aws_lambda_permission" "permissions_to_allow_transform_lambda_to_be_triggered" {
-  statement_id  = "AllowExecutionFromEventBridge"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.transform_lambda.function_name
-  principal     = "events.amazonaws.com"
-  source_arn    = aws_lambda_function.extract_lambda.arn
-}
+
 #our target should be asynchronous invocation
 #make event rule for when it succeds,event target being TransformationLambda,setting  perms for lambda to inoke incase of incase of success
 #another event rule for when it fails,event target being ssns topic, setting lambda permission to send sns incase of failuire
 # resource "aws_cloudwatch_event_rule" "lambda_success_rule" {
 #   name="lambda_success_rule"
 #   description=" ingested lambda invokes transformation lambda once its succeeds"
-#   event_pattern = 
+#   event_pattern=jsonencode({
+#     "source": ["aws.lambda"],
+#     "detail": {
+#       "status-details": {
+#         "status": ["Successfully uploaded to ingested-data-lambda-legends-24"]
+#       }
+#     } 
+#   })
 # }
-# event_pattern={
-#   "source": ["aws.cloudformation"],
-#   "detail-type": ["CloudFormation Resource Status Change"],
-#   "detail": {
-#     "status-details": {
-#       "status": ["CREATE_COMPLETE"]
-#     },
-#     "resource-type": ["AWS::S3::Bucket", "AWS::SNS::Topic"]
-#   }
+
+# resource "aws_cloudwatch_event_target" "extract_lambda_event_target" {
+#   target_id = "SendToLambda"
+#   rule      = aws_cloudwatch_event_rule.lambda_success_rule.name
+#   arn       = aws_lambda_function.transform_lambda.arn
 # }
+
+resource "aws_lambda_permission" "permissions_to_allow_transform_lambda_to_be_triggered" {
+  statement_id  = "AllowExecutionFromEventBridge"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.transform_lambda.function_name
+  principal     = "lambda.amazonaws.com"
+  source_arn    = aws_lambda_function.extract_lambda.arn
+}
