@@ -196,11 +196,7 @@ resource "aws_cloudwatch_log_group" "cw_log_group" {
   name =  "/aws/lambda/${aws_lambda_function.extract_lambda.function_name}" 
 }
 
-resource "aws_cloudwatch_event_rule" "ingestion_lambda_rule" {
-  name                = "ingestion_lambda_rule"
-  schedule_expression = "rate(3 minutes)"
- 
-}
+
 # resource "aws_cloudwatch_event_target" "ingestion_lambda_target" {
 #   rule      = aws_cloudwatch_event_rule.ingestion_lambda_rule.name
 #   target_id = "SendToLambda"
@@ -221,6 +217,7 @@ resource "aws_iam_policy" "sns_publish_policy" {
   name_prefix = "sns-publish-policy-"
   policy      = data.aws_iam_policy_document.sns_policy_document.json
 }
+
 resource "aws_iam_role_policy_attachment" "ingestion_sns_publish_policy_attachment" {
   role       = aws_iam_role.lambda_role.name
   policy_arn = aws_iam_policy.sns_publish_policy.arn
@@ -256,3 +253,35 @@ resource "aws_iam_role_policy_attachment" "lambda_s3__transform_write_attachment
   role = aws_iam_role.lambda_role.name
   policy_arn = aws_iam_policy.s3_policy1.arn
 }
+
+# cloudwatch for transform
+
+resource "aws_cloudwatch_metric_alarm" "transform_lambda_error_alarm" {
+  alarm_name                = "LambdaTransformErrorAlarm"
+  comparison_operator       = "GreaterThanOrEqualToThreshold"
+  evaluation_periods        = 1 
+  metric_name               = "transform_error_filter"
+  namespace                 = "AWS/Lambda"
+  period                    = 120
+  statistic                 = "Sum"
+  threshold                 = 2
+  alarm_description         = "This metric monitors errors are logged"
+  alarm_actions             = [aws_sns_topic.cw_alert_topic.arn]
+  dimensions                = {FunctionName = aws_lambda_function.transform_lambda.function_name}
+
+}
+
+resource "aws_cloudwatch_log_group" "cw_log_group_transfrom" {
+  name =  "/aws/lambda/${aws_lambda_function.transform_lambda.function_name}" 
+}
+
+resource "aws_cloudwatch_event_rule" "transform_lambda_rule" {
+  name                = "transform_lambda_rule"
+  schedule_expression = "rate(3 minutes)"
+}
+
+# resource "aws_cloudwatch_event_target" "transform_lambda_target" {
+#   rule      = aws_cloudwatch_event_rule.transform_lambda_rule.name
+#   target_id = "SendToLambda"
+#   arn       = aws_lambda_function.transform_lambda.arn
+# }
