@@ -65,9 +65,7 @@ def transform_fact(df_dict):
     return fact_sales_df
 
 
-def setup():
-    s3 = boto3.client('s3')
-    bucket_name = "ingested-data-lambda-legends-24"
+def setup(s3, bucket_name):
     table_keys = [elem["Key"] for elem in s3.list_objects(Bucket=bucket_name)["Contents"]]
     df_dict = {}
 
@@ -76,17 +74,8 @@ def setup():
         name = key.split("/")[1][:-4]
         dataframe = pd.read_csv(io.StringIO(csv_content))
         df_dict[f"{name}_df"] = dataframe
-    
-    df_list = []
-    df_list.append(transform_counterparty(df_dict))
-    df_list.append(transform_currency(df_dict))
-    df_list.append(transform_staff(df_dict))
-    df_list.append(transform_date())
-    df_list.append(transform_design(df_dict))
-    df_list.append(transform_fact(df_dict))
-    df_list.append(transform_location(df_dict))
-
-    return df_list
+ 
+    return df_dict
 
 
 def lambda_handler(event,context):
@@ -95,11 +84,19 @@ def lambda_handler(event,context):
     folder_name = f"Tables_at_{timestamp}"
     try:
         logger.info("Getting individual tables and transforming")
-        df_list = setup()
+        s3 = boto3.client('s3')
+        bucket_name = "ingested-data-lambda-legends-24"
+        df_dict = setup(s3, bucket_name)      
+        df_list = []
+        df_list.append(transform_counterparty(df_dict))
+        df_list.append(transform_currency(df_dict))
+        df_list.append(transform_staff(df_dict))
+        df_list.append(transform_date())
+        df_list.append(transform_design(df_dict))
+        df_list.append(transform_fact(df_dict))
+        df_list.append(transform_location(df_dict))
         for dataframe in df_list:
             wr.s3.to_parquet(path=f"s3://{parquet_bucket_name}/{folder_name}/", df=dataframe, dataset=True)
         logger.info(f"Successfully uploaded to {parquet_bucket_name}")
     except Exception as e:
         logger.error(f"Error occurred with {e}")
-    
-setup()

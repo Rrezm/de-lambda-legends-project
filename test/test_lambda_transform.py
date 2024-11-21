@@ -30,7 +30,7 @@ def test_transform_staff(mock_data):
 
 @mock_aws
 def test_setup():
-    bucket_name = "ingested-data-lambda-legends-24"
+    bucket_name = "test-ingested-data-lambda-legends-24"
     s3 = boto3.client("s3", region_name="eu-west-2")
     s3.create_bucket(
         Bucket=bucket_name,
@@ -38,10 +38,13 @@ def test_setup():
             "LocationConstraint": "eu-west-2"
             }
         )
-    mock_csv_content = "staff_id,first_name,last_name,email_address\n1,John,Doe,john.doe@example.com\n2,Jane,Smith,jane.smith@example.com"
-    s3.put_object(Bucket=bucket_name, Key="folder/mock_file.csv", Body=mock_csv_content)
-    result = setup()
-    assert isinstance(result, list)
+    mock_csv_content1 = "staff_id,first_name,last_name,email_address\n1,John,Doe,john.doe@example.com\n2,Jane,Smith,jane.smith@example.com"
+    s3.put_object(Bucket=bucket_name, Key="folder/mock_file1.csv", Body=mock_csv_content1)
+    mock_csv_content2 = "staff_id,first_name\n1,Jo\n2,Jan"
+    s3.put_object(Bucket=bucket_name, Key="folder/mock_file2.csv", Body=mock_csv_content2)
+    result = setup(s3, bucket_name)
+    assert isinstance(result, dict)
+    assert list(result.keys()) == ['mock_file1_df', 'mock_file2_df']
     # assert len(result) > 0
     # assert all(isinstance(df, pd.DataFrame) for df in result)
 
