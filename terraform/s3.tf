@@ -61,7 +61,7 @@ resource "aws_s3_bucket" "processed_lambda_code_bucket" {
 
 resource "aws_s3_object" "transform_lambda_code" {
 bucket =  aws_s3_bucket.processed_lambda_code_bucket.bucket
-key    =  "processed_lambda_code_bucket/transform_lambda.zip"
+key    =  "processed_lambda_code_bucket/lambda_transform.zip"
 source      = data.archive_file.transform_lambda.output_path
 source_hash = data.archive_file.transform_lambda.output_base64sha256
 }
@@ -72,3 +72,22 @@ source_hash = data.archive_file.transform_lambda.output_base64sha256
 # source =  data.archive_file.layer2.output_path
 # depends_on = [ data.archive_file.layer2]
 # }
+
+resource "aws_s3_bucket" "load_lambda_code_bucket" {
+
+  bucket = "load-code-lambda-legends-24"
+  force_destroy = true 
+
+  tags = {
+    Name = "load-code-lambda-legends-24"
+    Environmnent = "Dev"
+    Project = "Lambda Legends Data Processor"
+  }
+}
+
+resource "aws_s3_object" "load_lambda_code" {
+bucket =  aws_s3_bucket.load_lambda_code_bucket.bucket
+key    =  "load_lambda_code_bucket/lambda_load.zip"
+source      = data.archive_file.load_lambda.output_path
+source_hash = data.archive_file.load_lambda.output_base64sha256
+}
