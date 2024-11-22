@@ -1,5 +1,6 @@
 resource "aws_secretsmanager_secret" "db_credentials" {
-  name = "db_credentials21"
+  name = "db_credentials22"
+  recovery_window_in_days = 0
 }
 
  resource "aws_secretsmanager_secret_version" "db_credentials" {
