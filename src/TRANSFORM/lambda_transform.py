@@ -88,15 +88,15 @@ def lambda_handler(event,context):
         bucket_name = "ingested-data-lambda-legends-24"
         df_dict = setup(s3, bucket_name)      
         df_list = []
-        df_list.append(transform_counterparty(df_dict))
-        df_list.append(transform_currency(df_dict))
-        df_list.append(transform_staff(df_dict))
-        df_list.append(transform_date())
-        df_list.append(transform_design(df_dict))
-        df_list.append(transform_fact(df_dict))
-        df_list.append(transform_location(df_dict))
-        for dataframe in df_list:
-            wr.s3.to_parquet(path=f"s3://{parquet_bucket_name}/{folder_name}/", df=dataframe, dataset=True)
+        df_list.append(("counterparty", transform_counterparty(df_dict)))
+        df_list.append(("currency", transform_currency(df_dict)))
+        df_list.append(("staff", transform_staff(df_dict)))
+        df_list.append(("date", transform_date()))
+        df_list.append(("design", transform_design(df_dict)))
+        df_list.append(("fact", transform_fact(df_dict)))
+        df_list.append(("location", transform_location(df_dict)))
+        for name, dataframe in df_list:
+            wr.s3.to_parquet(path=f"s3://{parquet_bucket_name}/{folder_name}/{name}", df=dataframe, dataset=True)
         logger.info(f"Successfully uploaded to {parquet_bucket_name}")
     except Exception as e:
-        logger.error(f"Error occurred with {e}")
+        logger.error(f"Error with transformation occurred with {e}")

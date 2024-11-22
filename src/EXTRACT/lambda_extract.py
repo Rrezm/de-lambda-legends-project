@@ -12,7 +12,7 @@ logger = logging.getLogger()
 logger.setLevel("INFO")
 
 
-def get_db_credentials(secret_name="db_credentials21"):
+def get_db_credentials(secret_name="db_credentials22"):
     """Retrieve database credentials from AWS Secrets Manager."""
     client = boto3.client("secretsmanager", region_name="eu-west-2")
     try:
@@ -106,4 +106,4 @@ def read_all_tables(event, context):
             read_and_put_data(name, bucket_name, s3, folder_name)
         logger.info(f"Successfully uploaded to {bucket_name}")
     except Exception as e:
-        logger.error(f"Error occurred with {e}")
+        logger.error(f"Error with extraction occurred with {e}")
