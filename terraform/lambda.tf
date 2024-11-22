@@ -38,10 +38,35 @@ resource "aws_lambda_function" "transform_lambda" {
   runtime       = "python3.11"
   role          = aws_iam_role.lambda_role.arn
   s3_bucket     = aws_s3_bucket.processed_lambda_code_bucket.bucket
-  s3_key        = "processed_lambda_code_bucket/transform_lambda.zip"
+  s3_key        = "processed_lambda_code_bucket/lambda_transform.zip" #if doesn't work switch to transform_lambda.zip
   layers        = ["arn:aws:lambda:eu-west-2:336392948345:layer:AWSSDKPandas-Python311:18"]
   timeout       = 900
   memory_size   = 1000
   depends_on = [aws_s3_object.transform_lambda_code]
   source_code_hash = data.archive_file.transform_lambda.output_base64sha256
+}
+
+###### Load LAMBDA #######
+
+data "archive_file" "load_lambda" {
+  type             = "zip"
+  output_file_mode = "0666"
+  source_file      = "${path.module}/../src/LOAD/lambda_load.py" #
+  output_path      = "${path.module}/../lambda_load.zip"
+}
+
+
+
+resource "aws_lambda_function" "load_lambda" {
+  function_name = "load_lambda"
+  handler       = "lambda_load.lambda_handler" #
+  runtime       = "python3.11"
+  role          = aws_iam_role.lambda_role.arn
+  s3_bucket     = aws_s3_bucket.load_lambda_code_bucket.bucket
+  s3_key        = "load_lambda_code_bucket/lambda_load.zip" 
+  layers        = [aws_lambda_layer_version.lambda_layer.arn] #
+  timeout       = 900
+  memory_size   = 1000
+  depends_on = [aws_s3_object.load_lambda_code]
+  source_code_hash = data.archive_file.load_lambda.output_base64sha256
 }
