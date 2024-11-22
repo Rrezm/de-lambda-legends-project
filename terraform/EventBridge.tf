@@ -64,5 +64,13 @@ resource "aws_lambda_permission" "permissions_to_allow_transform_lambda_to_be_tr
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.transform_lambda.function_name
   principal     = "lambda.amazonaws.com"
-  source_arn    = aws_lambda_function.extract_lambda.arn
+  source_arn    = aws_lambda_function.extract_lambda.arn #hmmm
+}
+
+resource "aws_lambda_permission" "permissions_to_allow_load_lambda_to_be_triggered" {
+  statement_id  = "AllowExecutionFromEventBridge"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.load_lambda.function_name
+  principal     = "lambda.amazonaws.com"
+  source_arn    = aws_lambda_function.transform_lambda.arn #these lines feel confusing
 }
