@@ -99,4 +99,4 @@ def lambda_handler(event,context):
             wr.s3.to_parquet(path=f"s3://{parquet_bucket_name}/{folder_name}/", df=dataframe, dataset=True)
         logger.info(f"Successfully uploaded to {parquet_bucket_name}")
     except Exception as e:
-        logger.error(f"Error occurred with {e}")
+        logger.error(f"Error with transformation occurred with {e}")

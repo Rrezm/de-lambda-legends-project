@@ -106,4 +106,4 @@ def read_all_tables(event, context):
             read_and_put_data(name, bucket_name, s3, folder_name)
         logger.info(f"Successfully uploaded to {bucket_name}")
     except Exception as e:
-        logger.error(f"Error occurred with {e}")
+        logger.error(f"Error with extraction occurred with {e}")
