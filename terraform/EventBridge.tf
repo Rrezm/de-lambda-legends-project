@@ -64,7 +64,22 @@ resource "aws_lambda_permission" "permissions_to_allow_transform_lambda_to_be_tr
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.transform_lambda.function_name
   principal     = "lambda.amazonaws.com"
-  source_arn    = aws_lambda_function.extract_lambda.arn #hmmm
+  source_arn    = aws_lambda_function.extract_lambda.arn 
+}
+
+
+resource "aws_lambda_function_event_invoke_config" "invoke_load_lambda" {
+  function_name = aws_lambda_function.transform_lambda.function_name
+
+  destination_config {
+    on_failure {
+      destination =  aws_sns_topic.cw_alert_topic.arn
+    }
+
+    on_success {
+      destination =aws_lambda_function.load_lambda.arn
+  }
+}
 }
 
 resource "aws_lambda_permission" "permissions_to_allow_load_lambda_to_be_triggered" {
@@ -72,5 +87,6 @@ resource "aws_lambda_permission" "permissions_to_allow_load_lambda_to_be_trigger
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.load_lambda.function_name
   principal     = "lambda.amazonaws.com"
-  source_arn    = aws_lambda_function.transform_lambda.arn #these lines feel confusing
+  source_arn    = aws_lambda_function.transform_lambda.arn 
 }
+

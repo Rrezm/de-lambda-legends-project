@@ -59,12 +59,12 @@ data "archive_file" "load_lambda" {
 
 resource "aws_lambda_function" "load_lambda" {
   function_name = "load_lambda"
-  handler       = "lambda_load.lambda_handler" #
+  handler       = "lambda_load.input_data_psql" #
   runtime       = "python3.11"
   role          = aws_iam_role.lambda_role.arn
   s3_bucket     = aws_s3_bucket.load_lambda_code_bucket.bucket
   s3_key        = "load_lambda_code_bucket/lambda_load.zip" 
-  layers        = [aws_lambda_layer_version.lambda_layer.arn] #
+  layers        = ["arn:aws:lambda:eu-west-2:336392948345:layer:AWSSDKPandas-Python311:18",aws_lambda_layer_version.lambda_layer.arn]
   timeout       = 900
   memory_size   = 1000
   depends_on = [aws_s3_object.load_lambda_code]

@@ -292,7 +292,7 @@ resource "aws_iam_policy" "extract_lambda_policy" {
       {
         Effect = "Allow",
         Action = "lambda:InvokeFunction",
-        Resource = aws_lambda_function.transform_lambda.arn
+        Resource = [aws_lambda_function.transform_lambda.arn,aws_lambda_function.load_lambda.arn]
       },
       # Permission to publish to cw_alert_topic on failure
       {
