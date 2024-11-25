@@ -217,4 +217,4 @@ def input_data_psql(event, context):
         close_conn(conn)
         logger.info("Successfully uploaded to the datawarehouse")
     except Exception as e:
-        logger.error(f"Error with transformation occurred with {e}")
+        logger.error(f"Error with load occurred with {e}")
