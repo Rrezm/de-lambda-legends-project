@@ -45,6 +45,9 @@ jobs:
         working-directory: terraform
         run: terraform init
       - name: Terraform Plan
+        env:
+          TF_VAR_credentials: ${{ secrets.DB_CREDENTIALS }}
+          TF_VAR_dw_credentials: ${{ secrets.DW_CREDENTIALS }}
         working-directory: terraform
         run: terraform plan
       - name: Terraform Apply
