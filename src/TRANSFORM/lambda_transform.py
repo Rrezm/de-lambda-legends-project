@@ -39,7 +39,7 @@ def transform_design(df_dict):
 
 def transform_location(df_dict):
     dim_location_df = df_dict["address_df"][["address_line_1", "address_line_2", "district", "city", "postal_code", "country", "phone"]]
-    dim_location_df["location_id"] = df_dict["sales_order_df"]["agreed_delivery_location_id"]
+    dim_location_df["location_id"] = df_dict["address_df"]["address_id"]
     dim_location_df = dim_location_df[["location_id", "address_line_1", "address_line_2", "district", "city", "postal_code", "country", "phone"]]
     return dim_location_df
 
@@ -55,7 +55,7 @@ def transform_date():
     return dim_time_df
 
 def transform_fact(df_dict):
-    fact_sales_df = df_dict["sales_order_df"][["sales_order_id", "counterparty_id", "units_sold", "unit_price", "currency_id", "agreed_payment_date", "agreed_delivery_date", "agreed_delivery_location_id"]] # needs create dates
+    fact_sales_df = df_dict["sales_order_df"][["sales_order_id", "counterparty_id", "units_sold", "unit_price", "currency_id", "design_id", "agreed_payment_date", "agreed_delivery_date", "agreed_delivery_location_id"]] # needs create dates
     fact_sales_df["sales_staff_id"] = df_dict["sales_order_df"]["staff_id"]
     fact_sales_df.index.name = "sales_record_id"
     fact_sales_df["created_date"] = df_dict["sales_order_df"]["created_at"].str.split(" ").str[0]
@@ -78,7 +78,7 @@ def setup(s3, bucket_name):
     return df_dict
 
 
-def lambda_handler(event,context):
+def lambda_handler(event, context):
     parquet_bucket_name = "processed-data-lambda-legends-24"
     timestamp = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
     folder_name = f"Tables_at_{timestamp}"
@@ -100,3 +100,4 @@ def lambda_handler(event,context):
         logger.info(f"Successfully uploaded to {parquet_bucket_name}")
     except Exception as e:
         logger.error(f"Error with transformation occurred with {e}")
+
