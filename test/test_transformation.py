@@ -25,4 +25,3 @@ def test_transform_staff():
     assert "location" in transformed_df.columns
     assert transformed_df["staff_id"].iloc[0] == 1
     assert transformed_df["department_name"].iloc[0] == "IT"
-

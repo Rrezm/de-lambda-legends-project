@@ -186,7 +186,7 @@ def input_data_psql(event, context):
                  q=row["quarter"])
 
     for index, row in df_dict["fact"].iterrows():
-        conn.run("""INSERT INTO fact_sales_order 
+        conn.run("""INSERT INTO fact_sales_order
                  (sales_order_id, created_date,
                  created_time, last_updated_date,
                  last_updated_time, sales_staff_id,
