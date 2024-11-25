@@ -18,6 +18,7 @@ jobs:
           python-version: '3.12'
       - name: Run Test
         run: |
+          pip install pandas
           make requirements
           make dev-setup
           make run-flake8
