@@ -1,0 +1,8 @@
+pytest
+boto3
+moto
+botocore
+pg8000
+pytest-cov
+coverage[toml]==7.6.4
+pandas
