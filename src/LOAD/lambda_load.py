@@ -100,13 +100,12 @@ def input_data_psql(event, context):
                         )
                         VALUES (:si, :fn, :ln, :dn, :l, :ea);
                         """,
-                        si=row["staff_id"],
-                        fn=row["first_name"],
-                        ln=row["last_name"],
-                        dn=row["department_name"],
-                        l=row["location"],
-                        ea=["email_address"]
-                    )
+                     si=row["staff_id"],
+                     fn=row["first_name"],
+                     ln=row["last_name"],
+                     dn=row["department_name"],
+                     l=row["location"],
+                     ea=["email_address"])
 
         for index, row in df_dict["counterparty"].iterrows():
             conn.run("""INSERT INTO dim_counterparty (
@@ -125,15 +124,15 @@ def input_data_psql(event, context):
                         :clc, :clpc, :clcountry, :clpn
                     );
                     """,
-                        ci=row["counterparty_id"],
-                        cln=row["counterparty_legal_name"],
-                        clal1=row["counterparty_legal_address_line_1"],
-                        clal2=row["counterparty_legal_address_line_2"],
-                        cld=row["counterparty_legal_district"],
-                        clc=row["counterparty_legal_city"],
-                        clpc=row["counterparty_legal_postal_code"],
-                        clcountry=row["counterparty_legal_country"],
-                        clpn=row["counterparty_legal_phone_number"])
+                     ci=row["counterparty_id"],
+                     cln=row["counterparty_legal_name"],
+                     clal1=row["counterparty_legal_address_line_1"],
+                     clal2=row["counterparty_legal_address_line_2"],
+                     cld=row["counterparty_legal_district"],
+                     clc=row["counterparty_legal_city"],
+                     clpc=row["counterparty_legal_postal_code"],
+                     clcountry=row["counterparty_legal_country"],
+                     clpn=row["counterparty_legal_phone_number"])
 
         for index, row in df_dict["currency"].iterrows():
             conn.run("""INSERT INTO dim_currency (
@@ -141,9 +140,9 @@ def input_data_psql(event, context):
                     )
                         VALUES (:ci, :cc, :cn);
                     """,
-                        ci=row["currency_id"],
-                        cc=row["currency_code"],
-                        cn=row["currency_name"])
+                     ci=row["currency_id"],
+                     cc=row["currency_code"],
+                     cn=row["currency_name"])
 
         for index, row in df_dict["design"].iterrows():
             conn.run("""INSERT INTO dim_design (
@@ -151,10 +150,10 @@ def input_data_psql(event, context):
                     )
                         VALUES (:di, :dn, :fl, :fn);
                     """,
-                        di=row["design_id"],
-                        dn=row["design_name"],
-                        fl=row["file_location"],
-                        fn=row["file_name"])
+                     di=row["design_id"],
+                     dn=row["design_name"],
+                     fl=row["file_location"],
+                     fn=row["file_name"])
 
         for index, row in df_dict["location"].iterrows():
             conn.run("""INSERT INTO dim_location (
@@ -163,14 +162,14 @@ def input_data_psql(event, context):
                     )
                         VALUES (:li, :al1, :al2, :d, :c, :pc, :country, :p);
                     """,
-                        li=row["location_id"],
-                        al1=row["address_line_1"],
-                        al2=row["address_line_2"],
-                        d=row["district"],
-                        c=row["city"],
-                        pc=row["postal_code"],
-                        country=row["country"],
-                        p=["phone"])
+                     li=row["location_id"],
+                     al1=row["address_line_1"],
+                     al2=row["address_line_2"],
+                     d=row["district"],
+                     c=row["city"],
+                     pc=row["postal_code"],
+                     country=row["country"],
+                     p=["phone"])
 
         for index, row in df_dict["date"].iterrows():
             conn.run("""INSERT INTO dim_date (
@@ -179,14 +178,14 @@ def input_data_psql(event, context):
                     )
                         VALUES (:di, :y, :m, :d, :dow, :dn, :mn, :q);
                     """,
-                        di=row["date_id"],
-                        y=row["year"],
-                        m=row["month"],
-                        d=row["day"],
-                        dow=row["day_of_week"],
-                        dn=["day_name"],
-                        mn=row["month_name"],
-                        q=row["quarter"])
+                     di=row["date_id"],
+                     y=row["year"],
+                     m=row["month"],
+                     d=row["day"],
+                     dow=row["day_of_week"],
+                     dn=["day_name"],
+                     mn=row["month_name"],
+                     q=row["quarter"])
 
         for index, row in df_dict["fact"].iterrows():
             conn.run("""INSERT INTO fact_sales_order
@@ -200,20 +199,20 @@ def input_data_psql(event, context):
                         :soi, :cd, :ct, :lud, :lut, :ssi,
                         :ci, :us, :up, :currencyi, :di, :apd, :add, :adli);
                     """,
-                        soi=row["sales_order_id"],
-                        cd=row["created_date"],
-                        ct=row["created_time"],
-                        lud=row["last_updated_date"],
-                        lut=row["last_updated_time"],
-                        ssi=row["sales_staff_id"],
-                        ci=row["counterparty_id"],
-                        us=row["units_sold"],
-                        up=row["unit_price"],
-                        currencyi=row["currency_id"],
-                        di=row["design_id"],
-                        apd=row["agreed_payment_date"],
-                        add=row["agreed_delivery_date"],
-                        adli=row["agreed_delivery_location_id"])
+                     soi=row["sales_order_id"],
+                     cd=row["created_date"],
+                     ct=row["created_time"],
+                     lud=row["last_updated_date"],
+                     lut=row["last_updated_time"],
+                     ssi=row["sales_staff_id"],
+                     ci=row["counterparty_id"],
+                     us=row["units_sold"],
+                     up=row["unit_price"],
+                     currencyi=row["currency_id"],
+                     di=row["design_id"],
+                     apd=row["agreed_payment_date"],
+                     add=row["agreed_delivery_date"],
+                     adli=row["agreed_delivery_location_id"])
 
         close_conn(conn)
         logger.info("Successfully uploaded to the datawarehouse")
