@@ -7,7 +7,6 @@ from botocore.exceptions import ClientError
 from pg8000 import DatabaseError
 import logging
 from datetime import datetime
-from sqlalchemy import create_engine
 import pandas as pd
 
 logger = logging.getLogger()
