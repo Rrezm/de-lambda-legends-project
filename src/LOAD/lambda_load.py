@@ -100,12 +100,12 @@ def input_data_psql(event, context):
                     )
                         VALUES (:si, :fn, :ln, :dn, :l, :ea);
                     """,
-            si=row["staff_id"],
-            fn=row["first_name"],
-            ln=row["last_name"],
-            dn=row["department_name"],
-            l=row["location"],
-            ea=["email_address"])
+                        si=row["staff_id"],
+                        fn=row["first_name"],
+                        ln=row["last_name"],
+                        dn=row["department_name"],
+                        l=row["location"],
+                        ea=["email_address"])
 
         for index, row in df_dict["counterparty"].iterrows():
             conn.run("""INSERT INTO dim_counterparty (
