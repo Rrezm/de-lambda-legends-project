@@ -278,7 +278,7 @@ resource "aws_cloudwatch_metric_alarm" "transform_lambda_error_alarm" {
 
 
 # resource "aws_cloudwatch_event_target" "transform_lambda_target" {
-#   rule      = aws_cloudwatch_event_rule.transform_lambda_rule.name
+#   rule      = aws_cloudwatch_event_rule.transform_lambda_rule.name #should this be aws_cloudwatch_event_rule.scheduler.name 
 #   target_id = "SendToLambda"
 #   arn       = aws_lambda_function.transform_lambda.arn
 # }
