@@ -48,6 +48,7 @@ jobs:
       - name: Terraform Apply
         env:
           TF_VAR_credentials: ${{ secrets.DB_CREDENTIALS }}
+          TF_VAR_dw_credentials: ${{ secrets.DW_CREDENTIALS }}
         working-directory: terraform
         run: terraform apply -auto-approve
         
