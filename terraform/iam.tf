@@ -225,34 +225,34 @@ resource "aws_iam_role_policy_attachment" "ingestion_sns_publish_policy_attachme
 
 # policy for processed data bucket
 
-resource "aws_iam_policy" "s3_policy2" {
-  name_prefix = "s3-processed-policy"
-  policy      = data.aws_iam_policy_document.s3_policy_doc.json
-}
-
-# iam roles and policies for lambda function
-
-# resource "aws_iam_role" "processed_lambda_role" {
-#   name_prefix        = "role-processed-lambda"
-#   assume_role_policy = data.aws_iam_policy_document.trust_policy.json
+# resource "aws_iam_policy" "s3_policy2" {
+#   name_prefix = "s3-processed-policy"
+#   policy      = data.aws_iam_policy_document.s3_policy_doc.json
 # }
 
-## attach 
+# # iam roles and policies for lambda function
 
-resource "aws_iam_role_policy_attachment" "processed_lambda_s3_write_attachment" {
-  role = aws_iam_role.lambda_role.name
-  policy_arn = aws_iam_policy.s3_policy2.arn
-}
+# # resource "aws_iam_role" "processed_lambda_role" {
+# #   name_prefix        = "role-processed-lambda"
+# #   assume_role_policy = data.aws_iam_policy_document.trust_policy.json
+# # }
+
+# ## attach 
+
+# resource "aws_iam_role_policy_attachment" "processed_lambda_s3_write_attachment" {
+#   role = aws_iam_role.lambda_role.name
+#   policy_arn = aws_iam_policy.s3_policy2.arn
+# }
 
 
-#################### ====== TRANSFORM LAMBDA ======= #########################
+# #################### ====== TRANSFORM LAMBDA ======= #########################
 
 
-#Attach
-resource "aws_iam_role_policy_attachment" "lambda_s3__transform_write_attachment" {
-  role = aws_iam_role.lambda_role.name
-  policy_arn = aws_iam_policy.s3_policy1.arn
-}
+# #Attach
+# resource "aws_iam_role_policy_attachment" "lambda_s3__transform_write_attachment" {
+#   role = aws_iam_role.lambda_role.name
+#   policy_arn = aws_iam_policy.s3_policy1.arn
+# }
 
 # cloudwatch for transform
 
