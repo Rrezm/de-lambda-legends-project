@@ -82,14 +82,16 @@ def transform_location(df_dict):
                             ]]
     dim_location_df["location_id"] = df_dict["address_df"]["address_id"]
     dim_location_df = dim_location_df[
-                                ["location_id",
+                                "location_id",
                                 "address_line_1",
                                 "address_line_2",
-                                "district", "city",
+                                "district",
+                                "city",
                                 "postal_code",
                                 "country",
-                                "phone"]
+                                "phone"
                             ]
+
     return dim_location_df
 
 
@@ -169,7 +171,9 @@ def lambda_handler(event, context):
         df_list.append(("location", transform_location(df_dict)))
         for name, dataframe in df_list:
             wr.s3.to_parquet(
-                        path=f"s3://{parquet_bucket_name}/{folder_name}/{name}",
+                        path=(
+                            f"s3://{parquet_bucket_name}/{folder_name}/{name}"
+                        ),
                         df=dataframe, dataset=True
                     )
         logger.info(f"Successfully uploaded to {parquet_bucket_name}")
