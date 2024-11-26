@@ -1,4 +1,3 @@
-#from src.LOAD.lambda_load import connect_to_db1
 from src.LOAD.lambda_load import input_data_psql
 from unittest.mock import MagicMock, patch
 
