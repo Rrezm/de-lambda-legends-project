@@ -1,5 +1,5 @@
 from unittest.mock import patch, MagicMock
-from src.EXTRACT.connection import get_db_credentials, connect_to_db
+from src.EXTRACT.lambda_extract import get_db_credentials, connect_to_db
 import pytest
 from pg8000 import DatabaseError
 import boto3
@@ -42,8 +42,8 @@ def test_get_db_credentions_with_error():
         get_db_credentials(secret_name="1")
 
 
-@patch("src.EXTRACT.connection.Connection")
-@patch("src.EXTRACT.connection.get_db_credentials")
+@patch("src.EXTRACT.lambda_extract.Connection")
+@patch("src.EXTRACT.lambda_extract.get_db_credentials")
 def test_connect_to_db_success(mock_get_db_credentials, mock_pg8000_connect):
     mock_get_db_credentials.return_value = {
         "user": "test_user",
@@ -66,7 +66,7 @@ def test_connect_to_db_success(mock_get_db_credentials, mock_pg8000_connect):
     assert conn == mock_conn
 
 
-@patch("src.EXTRACT.connection.get_db_credentials")
+@patch("src.EXTRACT.lambda_extract.get_db_credentials")
 def test_connect_to_db_no_credentials(mock_get_db_credentials):
     mock_get_db_credentials.return_value = None
     result = connect_to_db()
@@ -74,8 +74,8 @@ def test_connect_to_db_no_credentials(mock_get_db_credentials):
     assert result == "Failed to retrieve credentials"
 
 
-@patch("src.EXTRACT.connection.Connection")
-@patch("src.EXTRACT.connection.get_db_credentials")
+@patch("src.EXTRACT.lambda_extract.Connection")
+@patch("src.EXTRACT.lambda_extract.get_db_credentials")
 def test_connect_with_error(mock_get_db_credentials, mock_pg8000_connect):
     mock_get_db_credentials.return_value = {
         "user": "test_user",
