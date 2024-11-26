@@ -81,7 +81,7 @@ def transform_location(df_dict):
                                 "phone"
                             ]]
     dim_location_df["location_id"] = df_dict["address_df"]["address_id"]
-    dim_location_df = dim_location_df[
+    dim_location_df = dim_location_df[[
                                 "location_id",
                                 "address_line_1",
                                 "address_line_2",
@@ -90,7 +90,7 @@ def transform_location(df_dict):
                                 "postal_code",
                                 "country",
                                 "phone"
-                            ]
+                            ]]
 
     return dim_location_df
 
