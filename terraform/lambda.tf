@@ -39,6 +39,7 @@ resource "aws_lambda_function" "transform_lambda" {
   role          = aws_iam_role.lambda_role.arn
   s3_bucket     = aws_s3_bucket.processed_lambda_code_bucket.bucket
   s3_key        = "processed_lambda_code_bucket/lambda_transform.zip" #if doesn't work switch to transform_lambda.zip
+  # Pandas is too big to be stored in a dependencies layer so we use a managed layer for pandas
   layers        = ["arn:aws:lambda:eu-west-2:336392948345:layer:AWSSDKPandas-Python311:18"]
   timeout       = 900
   memory_size   = 1000
