@@ -3,7 +3,7 @@
 ![image](https://github.com/user-attachments/assets/14441100-dd62-4cd1-97b9-916e26561466)\
 This is a data engineering project which implements an end-to-end ETL (extract, transform, load) pipeline. 
 It extracts data from a database, transforms it to a star schema and finally loads it into an AWS warehouse. 
-A detailed description of the task can be found in TASK.md 
+A detailed description of the task can be found in ```TASK.md```.
 
 ## Prerequisites:
 - Python version 3.8 or higher
@@ -12,7 +12,9 @@ A detailed description of the task can be found in TASK.md
 
 ## Setup:
 1. Fork this repo and clone it to your device.
-2. Add the credentials as a github secret in a json format like so:
+3. In the terminal, run ```make requirements```. This creates a virtual environment and installs all the requirements inside it.
+4. Run ```source venv/bin/activate``` to move inside the virtual environment.
+5. Have your credentials in a json format like so:
  <pre>
    {"user":USER,
     "password": PASSWORD,
@@ -20,16 +22,16 @@ A detailed description of the task can be found in TASK.md
     "host": HOST,
     "port": PORT}
  </pre>
-In the terminal
-3. Run ```make requirements```. This creates a virtual environment and installs all the requirements inside it.\
-4. Run ```source venv/bin/activate``` to move inside the virtual environment.
+ If you want to run this via terraform, store them in a local ```vars.tf``` file. If you want to run this on ```git push```, store them as a secret on GitHub.
 
 ## Deployment:
-In the terminal
+If you are deploying via terraform, in your terminal:
 1. Run ```cd terraform``` to move to the terraform directory.
 2. Run ```terraform init``` to initialise the terraform files.
 3. Run ```terraform plan``` and, if you are happy with the plan,
 4. Run ```terraform apply```. If you are happy to continue, type ```yes```.
+
+If you are deploying via ```git push```, run ```git push``` in your terminal (you will need to make an edit to do this).
 
 ## Testing:
 In the terminal
@@ -45,7 +47,7 @@ In the terminal
 - ```pytest-cov```
 - ```coverage[toml]==7.6.4```
 - ```pandas```
-- ```awswranglers```
+- ```awswrangler```
 
 ## Current features:
 - **Data Extraction:** Uses a Python application to automatically ingest data from the totesys operational database into an S3 bucket in AWS.
