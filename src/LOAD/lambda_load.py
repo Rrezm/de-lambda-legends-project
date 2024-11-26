@@ -131,7 +131,8 @@ def input_data_psql(event, context):
                     counterparty_legal_phone_number
                 )
                 VALUES (
-                    :ci, :cln, :clal1, :clal2, :cld, :clc, :clpc, :clcountry, :clpn
+                    :ci, :cln, :clal1, :clal2, :cld,
+                    :clc, :clpc, :clcountry, :clpn
                 );
                 """,
                 ci=row["counterparty_id"],
@@ -222,13 +223,16 @@ def input_data_psql(event, context):
             conn.run(
                 """
                 INSERT INTO fact_sales_order (
-                    sales_order_id, created_date, created_time, last_updated_date,
-                    last_updated_time, sales_staff_id, counterparty_id, units_sold,
-                    unit_price, currency_id, design_id, agreed_payment_date,
+                    sales_order_id, created_date, created_time,
+                    last_updated_date, last_updated_time,
+                    sales_staff_id, counterparty_id,
+                    units_sold, unit_price, currency_id,
+                    design_id, agreed_payment_date,
                     agreed_delivery_date, agreed_delivery_location_id
                 )
                 VALUES (
-                    :soi, :cd, :ct, :lud, :lut, :ssi, :ci, :us, :up, :currencyi, :di,
+                    :soi, :cd, :ct, :lud, :lut,
+                    :ssi, :ci, :us, :up, :currencyi, :di,
                     :apd, :add, :adli
                 );
                 """,
