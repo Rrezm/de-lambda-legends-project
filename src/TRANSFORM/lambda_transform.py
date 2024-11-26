@@ -9,8 +9,24 @@ import logging
 logger = logging.getLogger()
 logger.setLevel("INFO")
 
+"""
+For transformation of data, dimensional and fact tables are made
+using columns from different tables within the database. The
+dimensional tables are denormalized making additional tables
+like the date table.
+"""
+
 
 def transform_staff(df_dict):
+    """
+    Transforms the data to produce a dimensional table for the staff.
+
+            Parameters:
+                    df_dict: Dictionary of the database tables as DataFrames.
+
+            Returns:
+                    dim_staff_df: Dimensional table for staff as a DataFrame.
+    """
     dim_staff_df = df_dict["staff_df"][
             ["staff_id", "first_name", "last_name", "email_address"]
         ]
@@ -22,6 +38,16 @@ def transform_staff(df_dict):
 
 
 def transform_counterparty(df_dict):
+    """
+    Transforms the data to produce a dimensional table for the counterparty.
+
+            Parameters:
+                    df_dict: Dictionary of the database tables as DataFrames.
+
+            Returns:
+                    dim_staff_df: Dimensional table for counterparty
+                                  as a DataFrame.
+    """
     dim_counterparty_df = df_dict["counterparty_df"][
             ["counterparty_id", "counterparty_legal_name"]
         ]
@@ -50,6 +76,18 @@ def transform_counterparty(df_dict):
 
 
 def transform_currency(df_dict):
+    """
+    Transforms the data to produce a dimensional table for the currency.
+    Creating currency name as a column, as it's not a column in
+    any other table.
+
+            Parameters:
+                    df_dict: Dictionary of the database tables as DataFrames.
+
+            Returns:
+                    dim_staff_df: Dimensional table for currency
+                                  as a DataFrame.
+    """
     dim_currency_df = (
         df_dict["currency_df"][["currency_id", "currency_code"]]
     )
@@ -62,6 +100,15 @@ def transform_currency(df_dict):
 
 
 def transform_design(df_dict):
+    """
+    Transforms the data to produce a dimensional table for the design.
+
+            Parameters:
+                    df_dict: Dictionary of the database tables as DataFrames.
+
+            Returns:
+                    dim_staff_df: Dimensional table for design as a DataFrame.
+    """
     dim_design_df = df_dict["design_df"][[
                                 "design_id",
                                 "design_name",
@@ -72,6 +119,16 @@ def transform_design(df_dict):
 
 
 def transform_location(df_dict):
+    """
+    Transforms the data to produce a dimensional table for the location.
+
+            Parameters:
+                    df_dict: Dictionary of the database tables as DataFrames.
+
+            Returns:
+                    dim_staff_df: Dimensional table for location
+                                  as a DataFrame.
+    """
     dim_location_df = df_dict["address_df"][[
                                 "address_line_1",
                                 "address_line_2",
@@ -96,6 +153,17 @@ def transform_location(df_dict):
 
 
 def transform_date():
+    """
+    Creating dimensional table for the date. Values and columns
+    not found in other tables so creates table from scratch using
+    pandas, date_range and datetime.
+
+            Parameters:
+                    No parameters because no common columns in database tables.
+
+            Returns:
+                    dim_staff_df: Dimensional table for date as a DataFrame.
+    """
     dim_time_df = pd.DataFrame(
         {"date_id": pd.date_range("2020-01-01", "2025-12-31")}
         )
@@ -110,6 +178,18 @@ def transform_date():
 
 
 def transform_fact(df_dict):
+    """
+    Transforms the data to produce a fact table for the sales orders.
+    Has columns, created_at and last_updated_at which include the
+    date and time, but here it is split up into a date column and
+    time column.
+
+            Parameters:
+                    df_dict: Dictionary of the database tables as DataFrames.
+
+            Returns:
+                    dim_staff_df: Fact table for sales orders as a DataFrame.
+    """
     fact_sales_df = df_dict["sales_order_df"][[
                                         "sales_order_id",
                                         "counterparty_id",
@@ -139,6 +219,17 @@ def transform_fact(df_dict):
 
 
 def setup(s3, bucket_name):
+    """
+    Read the csv files in the ingested bucket and convert them into
+    DataFrames. Add all the ingested DataFrames into a dictionary.
+
+            Parameters:
+                    s3: boto3 S3 client.
+                    bucket_name: Name of bucket to get the ingested data from.
+
+            Returns:
+                    df_dict: Dictionary of all the ingested DataFrames.
+    """
     tk = [i["Key"] for i in s3.list_objects(Bucket=bucket_name)["Contents"]]
     df_dict = {}
 
@@ -153,6 +244,19 @@ def setup(s3, bucket_name):
 
 
 def lambda_handler(event, context):
+    """
+    Timestamp to group the transform invocations together into a folder.
+    Add transformed DataFrames into a list then loop through it. While
+    looping, convert DataFrames to parquets and add them to processed
+    S3 bucket. Raise an error if writing to S3 bucket doesn't work.
+
+            Parameters:
+                    event: Data that is passed to the function.
+                    context: Information about the function configuration.
+
+            Returns:
+                    No returns, only putting the data into S3.
+    """
     parquet_bucket_name = "processed-data-lambda-legends-24"
     timestamp = datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
     folder_name = f"Tables_at_{timestamp}"
@@ -176,6 +280,7 @@ def lambda_handler(event, context):
                         ),
                         df=dataframe, dataset=True
                     )
+        # Group by time by having common output path in folder_name
         logger.info(f"Successfully uploaded to {parquet_bucket_name}")
     except Exception as e:
         logger.error(f"Error with transformation occurred with {e}")

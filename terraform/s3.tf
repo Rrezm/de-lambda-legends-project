@@ -1,3 +1,4 @@
+# EXTRACTION/INGESTION buckets
 resource "aws_s3_bucket" "ingested_bucket"{
     bucket = "ingested-data-lambda-legends-24"
       force_destroy = true 
@@ -8,6 +9,7 @@ tags = {
 
 }
 }
+
 
 resource "aws_s3_bucket" "lambda_code_bucket" {
 
@@ -30,6 +32,7 @@ source      = data.archive_file.lambda.output_path
 source_hash = data.archive_file.lambda.output_base64sha256
 }
 
+
 resource "aws_s3_object" "layer_code" {
 bucket =  aws_s3_bucket.lambda_code_bucket.bucket
 key    =  "layer/layer.zip"
@@ -37,6 +40,8 @@ source =  data.archive_file.layer.output_path
 depends_on = [ data.archive_file.layer]
 }
 
+
+# PROCESSED/TRANSFORMED buckets
 resource "aws_s3_bucket" "processed_bucket"{
   bucket = "processed-data-lambda-legends-24"
   force_destroy = true 
@@ -46,6 +51,7 @@ resource "aws_s3_bucket" "processed_bucket"{
     Project = "Lambda Legends Data Processor"
   }
 }
+
 
 resource "aws_s3_bucket" "processed_lambda_code_bucket" {
 
@@ -59,6 +65,7 @@ resource "aws_s3_bucket" "processed_lambda_code_bucket" {
   }
 }
 
+
 resource "aws_s3_object" "transform_lambda_code" {
 bucket =  aws_s3_bucket.processed_lambda_code_bucket.bucket
 key    =  "processed_lambda_code_bucket/lambda_transform.zip"
@@ -66,13 +73,8 @@ source      = data.archive_file.transform_lambda.output_path
 source_hash = data.archive_file.transform_lambda.output_base64sha256
 }
 
-# resource "aws_s3_object" "layer_code2" {
-# bucket =  aws_s3_bucket.lambda_code_bucket.bucket
-# key    =  "layer/layer2.zip"
-# source =  data.archive_file.layer2.output_path
-# depends_on = [ data.archive_file.layer2]
-# }
 
+# LOAD buckets, only need it for code, no data
 resource "aws_s3_bucket" "load_lambda_code_bucket" {
 
   bucket = "load-code-lambda-legends-24"
@@ -84,6 +86,7 @@ resource "aws_s3_bucket" "load_lambda_code_bucket" {
     Project = "Lambda Legends Data Processor"
   }
 }
+
 
 resource "aws_s3_object" "load_lambda_code" {
 bucket =  aws_s3_bucket.load_lambda_code_bucket.bucket

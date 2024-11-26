@@ -1,3 +1,4 @@
+# Database credentials
 resource "aws_secretsmanager_secret" "db_credentials" {
   name = "db_credentials22"
   recovery_window_in_days = 0
@@ -8,6 +9,7 @@ resource "aws_secretsmanager_secret" "db_credentials" {
     secret_string = jsonencode(var.credentials)
  }
  
+ # Datawarehouse credentials
  resource "aws_secretsmanager_secret" "dw_credentials" {
   name = "db_credentials23"
   recovery_window_in_days = 0

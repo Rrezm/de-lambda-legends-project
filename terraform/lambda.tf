@@ -1,11 +1,11 @@
-####INGESTION LAMBDA #####
+###### Ingestion LAMBDA ######
+
 data "archive_file" "lambda" {
   type             = "zip"
   output_file_mode = "0666"
   source_file      = "${path.module}/../src/EXTRACT/lambda_extract.py"
   output_path      = "${path.module}/../extract_data.zip"
 }
-
 
 
 resource "aws_lambda_function" "extract_lambda" {
@@ -21,7 +21,8 @@ resource "aws_lambda_function" "extract_lambda" {
   source_code_hash = data.archive_file.lambda.output_base64sha256
 }
 
-###### Transformation LAMBDA #######
+
+###### Transformation LAMBDA ######
 
 data "archive_file" "transform_lambda" {
   type             = "zip"
@@ -29,7 +30,6 @@ data "archive_file" "transform_lambda" {
   source_file      = "${path.module}/../src/TRANSFORM/lambda_transform.py"
   output_path      = "${path.module}/../lambda_transform.zip"
 }
-
 
 
 resource "aws_lambda_function" "transform_lambda" {
@@ -46,6 +46,7 @@ resource "aws_lambda_function" "transform_lambda" {
   source_code_hash = data.archive_file.transform_lambda.output_base64sha256
 }
 
+
 ###### Load LAMBDA #######
 
 data "archive_file" "load_lambda" {
@@ -54,7 +55,6 @@ data "archive_file" "load_lambda" {
   source_file      = "${path.module}/../src/LOAD/lambda_load.py" #
   output_path      = "${path.module}/../lambda_load.zip"
 }
-
 
 
 resource "aws_lambda_function" "load_lambda" {

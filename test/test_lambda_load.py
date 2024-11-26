@@ -17,5 +17,3 @@ def test_psql_empty(mock_connect_to_db, mock_read_data):
     mock_read_data.return_value = {}
     result = input_data_psql({}, None)
     assert result is None
-
-

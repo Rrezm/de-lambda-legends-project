@@ -13,7 +13,18 @@ logger.setLevel("INFO")
 
 
 def get_db_credentials(secret_name="db_credentials23"):
-    """Retrieve datawarehouse credentials from AWS Secrets Manager."""
+    """
+    Retrieve datawarehouse credentials from AWS Secrets Manager.
+    Different secret to the database secret. Raise error if not
+    able to get secret.
+
+            Parameters:
+                    secret_name: Name of the secret in AWS secrets manager,
+                                 default is db_credentials23.
+
+            Returns:
+                    Credentials for the database.
+    """
     client = boto3.client("secretsmanager", region_name="eu-west-2")
     try:
         response = client.get_secret_value(SecretId=secret_name)
@@ -31,8 +42,14 @@ def get_db_credentials(secret_name="db_credentials23"):
     }
 
 
-def connect_to_db1():
-    """Establish connection to the database."""
+def connect_to_dw():
+    """
+    Establish connection to the database using the get_db_credentials function.
+    Raise error if not able to connect to datawarehouse.
+
+            Returns:
+                    pg8000.native connection which is used to run sql queries.
+    """
     credentials = get_db_credentials()
     if not credentials:
         return "Failed to retrieve credentials"
@@ -56,6 +73,15 @@ def close_conn(conn):
 
 
 def read_data():
+    """
+    Find the latest processed data. Loop through that data by getting it
+    from S3 and convert the parquets into DataFrames. Add the processed
+    DataFrames into a dictionary.
+
+            Returns:
+                    df_dict: Dictionary of all processed DataFrames.
+
+    """
     s3 = boto3.client('s3')
     bucket_name = "processed-data-lambda-legends-24"
     tk = [i["Key"] for i in s3.list_objects(Bucket=bucket_name)["Contents"]]
@@ -73,7 +99,7 @@ def read_data():
         parquet_content = s3.get_object(Bucket=bucket_name,
                                         Key=key)["Body"].read()
         df = pd.read_parquet(io.BytesIO(parquet_content))
-        df = df.fillna("None")
+        df = df.fillna("None")  # Replace null values with None
         table_name = key.split("/")[1]
         df_dict[table_name] = df
 
@@ -81,7 +107,20 @@ def read_data():
 
 
 def input_data_psql(event, context):
-    conn = connect_to_db1()
+    """
+    Clears tables in datawarehouse to avoid repeat data. Loop
+    through each of the processed DataFrames and insert the data
+    into the Datawarehouse tables using pg8000 and SQL queries.
+    Raise an error if there's a problem with deleting or inserting.
+
+            Parameters:
+                    event: Data that is passed to the function.
+                    context: Information about the function configuration.
+
+            Returns:
+                    No returns, only putting the data into datawarehouse.
+    """
+    conn = connect_to_dw()
     try:
         logger.info("Getting individual tables and loading into datawarehouse")
         df_dict = read_data()

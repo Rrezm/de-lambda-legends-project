@@ -13,7 +13,17 @@ logger.setLevel("INFO")
 
 
 def get_db_credentials(secret_name="db_credentials22"):
-    """Retrieve database credentials from AWS Secrets Manager."""
+    """
+    Retrieve database credentials from AWS Secrets Manager.
+    Raise error if not able to get secret.
+
+            Parameters:
+                    secret_name: Name of the secret in AWS secrets manager,
+                                 default is db_credentials22.
+
+            Returns:
+                    Credentials for the database.
+    """
     client = boto3.client("secretsmanager", region_name="eu-west-2")
     try:
         response = client.get_secret_value(SecretId=secret_name)
@@ -32,7 +42,12 @@ def get_db_credentials(secret_name="db_credentials22"):
 
 
 def connect_to_db():
-    """Establish connection to the database."""
+    """
+    Establish connection to the database using the get_db_credentials function.
+
+            Returns:
+                    pg8000.native connection which is used to run sql queries.
+    """
     credentials = get_db_credentials()
     if not credentials:
         return "Failed to retrieve credentials"
@@ -56,7 +71,19 @@ def close_conn(conn):
 
 
 def read_and_put_data(table_name, bucket_name, s3, folder_name):
-    """Read data from a database table and upload it to an S3 bucket."""
+    """
+    Connect to database, extract the data using sql queries,
+    convert query return to csv format and save to the S3 bucket
+
+            Parameters:
+                    table_name: Name of the table to get the data from.
+                    bucket_name: Name of the bucket to put the data into.
+                    s3: boto3 s3 client.
+                    folder_name: Name of folder with timestamp.
+
+            Returns:
+                    No returns, only putting the data into S3.
+    """
     conn = connect_to_db()  # Connects to the database
     result = conn.run(f"SELECT * FROM {table_name};")  # Queries all rows
     keys = conn.run(
@@ -81,7 +108,17 @@ def read_and_put_data(table_name, bucket_name, s3, folder_name):
 
 
 def read_all_tables(event, context):
-    """Read multiple tables and upload them to an S3 bucket."""
+    """
+    Read multiple tables and upload them all to an S3 bucket.
+    Have a timestamp to group each extraction by time.
+
+            Parameters:
+                    event: Data that is passed to the function.
+                    context: Information about the function configuration.
+
+            Returns:
+                    No returns, only putting the data into S3.
+    """
     table_names = [
         "counterparty",
         "currency",
