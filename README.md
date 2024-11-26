@@ -20,7 +20,7 @@ A detailed description of the task can be found in TASK.md
     "host": HOST,
     "port": PORT}
  </pre>
-In the terminal\
+In the terminal
 3. Run ```make requirements```. This creates a virtual environment and installs all the requirements inside it.\
 4. Run ```source venv/bin/activate``` to move inside the virtual environment.
 
@@ -44,6 +44,8 @@ In the terminal
 - ```pg8000```
 - ```pytest-cov```
 - ```coverage[toml]==7.6.4```
+- ```pandas```
+- ```awswranglers```
 
 ## Current features:
 - **Data Extraction:** Uses a Python application to automatically ingest data from the totesys operational database into an S3 bucket in AWS.
