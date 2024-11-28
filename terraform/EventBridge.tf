@@ -1,8 +1,8 @@
 # This should set up a scheduler that will trigger the Lambda every 2 minutes
 resource "aws_cloudwatch_event_rule" "scheduler" {
   name="schedule-for-extract_lambda"
-  description="trigger the Lambda every 2 minutes"
-  schedule_expression="cron(0/2 * * * ? *)"
+  description="trigger the Lambda every 10 minutes"
+  schedule_expression="cron(0/10 * * * ? *)"
 }
 
 
